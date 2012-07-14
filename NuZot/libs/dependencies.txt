@@ -1,2 +1,4 @@
-https://github.com/msama/ScalaZ3
-http://research.microsoft.com/en-us/um/redmond/projects/z3/download.html
+Scala 2.9.1
+JUnit 4
+Z3 4.0 http://research.microsoft.com/en-us/um/redmond/projects/z3/download.html
+ScalaZ3 https://github.com/msama/ScalaZ3
