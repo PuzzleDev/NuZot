@@ -1,0 +1,19 @@
+(theory NuZot-Core
+
+ :smt-lib-version 2.0
+ :written_by "Michele Sama", "Matteo Rossi"
+ :date "2012-04-18"
+ :last_modified "2012-04-18"
+
+ ;:sorts ((Bool 0))
+
+ :funs (
+ 		(<=> Bool Bool :right-assoc)
+       )
+
+ :definition
+ "Implements core functions used in nuzot"
+ 
+ :values 
+ "" 
+)

@@ -1,0 +1,2 @@
+https://github.com/msama/ScalaZ3
+http://research.microsoft.com/en-us/um/redmond/projects/z3/download.html

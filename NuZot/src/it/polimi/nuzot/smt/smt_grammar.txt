@@ -1,0 +1,73 @@
+<comment> ::== ;[.^\n]*\n //FIXME
+<numeral> ::== 0 | [1-9][0-9]*
+<decimal> ::== <numeral>.0*<numeral>
+<string> ::== "" //FIXME
+<symbol> ::== [a-zA-Z~!@$%^&\*_\-\+=<>\.\?/][a-zA-Z0-9~!@$%^&\*_\-\+=<>\.\?/]* | \|[.^|]*\| //FIXME
+<keyword> ::== :[a-zA-Z0-9~!@$%^&\*_\-\+=<>\.\?/]+
+                            
+<spec_constant> ::= <numeral> | <decimal> | <hexadecimal> | <binary> | <string>
+<s_expr> ::= <spec_constant> | <symbol> | <keyword> | ( <s_expr>* )
+
+<identifier> ::== <symbol> | ( _<symbol> <numeral>+ )   
+<attribute_value> ::= <spec_constant>| <symbol> | ( s_expr* )
+<attribute> ::= <keyword> | <keyword> <attribute_value>
+
+<sort> ::= <identifier> | ( <identifier> <sort>+ )
+
+// Formulas
+<qual_identifier> ::= <identifier> | ( as <identifier> <sort> )
+<sorted_var> ::= ( <symbol> <sort> )
+<term> ::== <spec constant>
+		| <qual_identifier>
+		| ( <qual_identifier> <term>+ )
+		| ( let ( <var_binding>+ ) <term> )
+		| ( forall ( <sorted_var>+ ) <term> )
+		| ( exists ( <sorted_var>+ ) <term> )
+		| ( ! <term> <attribute>+ )
+<var_binding> ::= ( <symbol> <term> )		
+		
+// Theory declarations
+<sort_symbol_decl> ::= ( <identifier> <numeral> <attribute>* )
+<meta_spec_constant> ::= NUMERAL | DECIMAL | STRING
+<fun_symbol_decl> ::== ( <spec_constant> <sort> <attribute>* )
+		| ( <meta_spec_constant> <sort> <attribute>* )
+		| ( <identifier> <sort>+ <attribute>* )
+<par_fun_symbol_decl> ::== <fun_symbol_decl>
+		| ( par ( <symbol>+ ) ( <identifier> <sort>+ <attribute>* ) )
+<theory_attribute> ::== :sort ( <sort_symbol>+ ) // <sort_symbol> is not defined. Maybe they meant <sort> or <sort_symbol_decl>
+		| :funs ( <par_fun_symbol_decl>+ )
+		| :sorts-description <string>
+		| :funs-description <string>
+		| :definition <string>
+		| :values <string>
+		| :notes <string>
+		| <attribute>
+<theory_decl> ::== ( theory <symbol> <theory_attribute>+ )
+
+
+// Logic declarations
+<logic_attribute> ::== :theories ( <symbol>+ )
+		| :language <string>
+		| :extensions <string>
+		| :values <string>
+		| :notes <string>
+		| <attribute>
+<logic> ::== ( logic <symbol> <logic_attribute>+ )
+
+		
+// Scripts
+<command> ::== ( set-logic <symbol> )
+		| ( set-info <attribute> )
+		| ( assert <term> )
+		| ( check-sat )
+		| ( get-model )
+		| ( declare-sort <symbol> <numeral> )
+		| ( define-sort <symbol> ( <symbol>* ) <sort> )
+		| ( declare-fun <symbol> ( <sort>* ) <sort> )
+		| ( define-fun <symbol> ( <sorted_var>* ) <sort> <term> )
+		| ( exit )
+		| ( push )
+		| ( pop )
+		| ( load <string> )
+		| ( save )
+<script> ::== <command>*

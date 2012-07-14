@@ -1,0 +1,19 @@
+(logic PLTLB
+
+ :smt-lib-version 2.0
+ :written_by "Michele Sama", "Matteo Rossi"
+ :date "2012-04-18"
+ :last_modified "2012-04-18"
+ :update_log 
+
+ :theories (NuZot-Core)
+
+ :language 
+ ""
+
+ :extensions
+ ""
+
+:notes
+ ""
+)
