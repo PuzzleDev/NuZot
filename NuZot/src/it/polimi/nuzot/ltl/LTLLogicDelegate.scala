@@ -13,7 +13,6 @@ import it.polimi.nuzot.smt.grammar._
  *
  */
 class LTLLogicDelegate extends LogicDelegate {
-
     
     /**
      * Adds the following prerequisites at the
@@ -302,16 +301,49 @@ class LTLLogicDelegate extends LogicDelegate {
                 return ltl.expandSubformula(op, script)  
             }
             case op: Rem => {
-                throw new IllegalStateException("Not implemented")
+                for (i <- 0 until ltl.temporalExt + 1) {
+                    script = script :+ CommandAssert(
+                            Rem(
+                                ltl.expandTemporalFunctionsAtTime(op.left, ltl.const(i)),
+                            	ltl.expandTemporalFunctionsAtTime(op.right, ltl.const(i))
+                        		)	
+                    		)
+                }
+                return script
             }
             case op: ITE => {
-                throw new IllegalStateException("Not implemented")
+                for (i <- 0 until ltl.temporalExt + 1) {
+                    script = script :+ CommandAssert(
+                            ITE(
+                                ltl.expandTemporalFunctionsAtTime(op.ifa, ltl.const(i)),
+                            	ltl.expandTemporalFunctionsAtTime(op.thena, ltl.const(i)),
+                            	ltl.expandTemporalFunctionsAtTime(op.elsea, ltl.const(i))
+                        		)	
+                    		)
+                }
+                return script
             }
             case op: IFF => {
-                throw new IllegalStateException("Not implemented")
+                for (i <- 0 until ltl.temporalExt + 1) {
+                    script = script :+ CommandAssert(
+                            IFF(
+                                ltl.expandTemporalFunctionsAtTime(op.ifa, ltl.const(i)),
+                            	ltl.expandTemporalFunctionsAtTime(op.thena, ltl.const(i))
+                        		)	
+                    		)
+                }
+                return script
             }
             case op: IMP => {
-                throw new IllegalStateException("Not implemented")
+                for (i <- 0 until ltl.temporalExt + 1) {
+                    script = script :+ CommandAssert(
+                            IMP(
+                                ltl.expandTemporalFunctionsAtTime(op.ifa, ltl.const(i)),
+                            	ltl.expandTemporalFunctionsAtTime(op.thena, ltl.const(i))
+                        		)	
+                    		)
+                }
+                return script
             }
             
             case op: Or => {
