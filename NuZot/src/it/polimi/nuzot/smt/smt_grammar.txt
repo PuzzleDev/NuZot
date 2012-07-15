@@ -1,18 +1,19 @@
-<comment> ::== ;[.^\n]*\n //FIXME
-<numeral> ::== 0 | [1-9][0-9]*
-<decimal> ::== <numeral>.0*<numeral>
-<string> ::== "" //FIXME
-<symbol> ::== [a-zA-Z~!@$%^&\*_\-\+=<>\.\?/][a-zA-Z0-9~!@$%^&\*_\-\+=<>\.\?/]* | \|[.^|]*\| //FIXME
+<integer> ::== 0 | [1-9][0-9]*
+<real> ::== <integer>.0*<integer>[[e|E][+|-]<integer>]?
+<boolean> ::== true | false
+<string> ::== ".*"
+<symbol> ::== [a-zA-Z~!@$%^&\*_\-\+=<>\.\?/][a-zA-Z0-9~!@$%^&\*_\-\+=<>\.\?/]* | \|[.^|]*\|
 <keyword> ::== :[a-zA-Z0-9~!@$%^&\*_\-\+=<>\.\?/]+
                             
-<spec_constant> ::= <numeral> | <decimal> | <hexadecimal> | <binary> | <string>
+<spec_constant> ::= <integer> | <real> | <hexadecimal> | <boolean> | <string>
 <s_expr> ::= <spec_constant> | <symbol> | <keyword> | ( <s_expr>* )
 
-<identifier> ::== <symbol> | ( _<symbol> <numeral>+ )   
+<identifier> ::== <symbol> | ( _<symbol> <integer>+ )   
 <attribute_value> ::= <spec_constant>| <symbol> | ( s_expr* )
 <attribute> ::= <keyword> | <keyword> <attribute_value>
 
 <sort> ::= <identifier> | ( <identifier> <sort>+ )
+
 
 // Formulas
 <qual_identifier> ::= <identifier> | ( as <identifier> <sort> )
@@ -25,16 +26,17 @@
 		| ( exists ( <sorted_var>+ ) <term> )
 		| ( ! <term> <attribute>+ )
 <var_binding> ::= ( <symbol> <term> )		
-		
+
+	
 // Theory declarations
-<sort_symbol_decl> ::= ( <identifier> <numeral> <attribute>* )
+<sort_symbol_decl> ::= ( <identifier> <integer> <attribute>* )
 <meta_spec_constant> ::= NUMERAL | DECIMAL | STRING
 <fun_symbol_decl> ::== ( <spec_constant> <sort> <attribute>* )
 		| ( <meta_spec_constant> <sort> <attribute>* )
 		| ( <identifier> <sort>+ <attribute>* )
 <par_fun_symbol_decl> ::== <fun_symbol_decl>
 		| ( par ( <symbol>+ ) ( <identifier> <sort>+ <attribute>* ) )
-<theory_attribute> ::== :sort ( <sort_symbol>+ ) // <sort_symbol> is not defined. Maybe they meant <sort> or <sort_symbol_decl>
+<theory_attribute> ::== :sort ( <sort_symbol_decl>+ )
 		| :funs ( <par_fun_symbol_decl>+ )
 		| :sorts-description <string>
 		| :funs-description <string>
@@ -56,18 +58,21 @@
 
 		
 // Scripts
-<command> ::== ( set-logic <symbol> )
+<init_command> ::== ( set-logic <symbol> )
+ 		| ( set-info <attribute> )
+
+<command> ::== <init_command>
+		| ( set-logic <symbol> )
 		| ( set-info <attribute> )
 		| ( assert <term> )
 		| ( check-sat )
 		| ( get-model )
-		| ( declare-sort <symbol> <numeral> )
+		| ( declare-sort <symbol> <integer> )
 		| ( define-sort <symbol> ( <symbol>* ) <sort> )
 		| ( declare-fun <symbol> ( <sort>* ) <sort> )
 		| ( define-fun <symbol> ( <sorted_var>* ) <sort> <term> )
 		| ( exit )
 		| ( push )
 		| ( pop )
-		| ( load <string> )
-		| ( save )
+
 <script> ::== <command>*

@@ -1,0 +1,11 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Push and pop example
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(set-info :k 5)
+(declare-fun x () Int)
+(push)
+(assert (= x 5))
+(get-model)
+(pop)
+(assert (= x 10))
+(get-model)

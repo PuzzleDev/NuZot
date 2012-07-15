@@ -1,0 +1,9 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Only tomorrow
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(set-info :k 5)
+(declare-tfun x () Bool)
+(assert (! x))
+(assert (next x))
+(assert (! (next (next x))))
+(get-model)

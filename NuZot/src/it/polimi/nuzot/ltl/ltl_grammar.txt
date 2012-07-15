@@ -1,0 +1,5 @@
+<ltl_command> ::== <command>
+	  | ( assert-t <term> <spec_constant>)
+      | ( declare-tfun <symbol> ( <sort>* ) <sort> )
+      
+<ltl_script> ::== <ltl_command>*

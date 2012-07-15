@@ -1,0 +1,6 @@
+<shell_command> ::== <ltl_command>
+		| ( echo <string> )
+		| ( load <string> )
+		| ( save <string> )
+		
+<shell_script> ::== <shell_command>*

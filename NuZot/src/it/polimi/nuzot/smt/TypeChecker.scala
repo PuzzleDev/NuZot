@@ -233,7 +233,6 @@ class TypeChecker extends DSLInterpreter {
 	
 	override protected def visitCommand(
 	        command: Command, computed: Script): Script = {
-	    println(command)
         // If terminated skip all the further commands
         if (terminated) {
             return computed :+ command

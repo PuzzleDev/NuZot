@@ -1,0 +1,9 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Using reals example
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(set-info :domain Real)
+(set-info :k 5.0)
+(declare-fun x () Real)
+(assert (next (> x 0.12)))
+(check-sat)
+(get-model)
