@@ -209,11 +209,13 @@ class LTLInterpreter() extends DSLInterpreter {
             }
             case x: TermQualIdentifierTerms => {
                 // Expand (x k) in (x time k)
-                val symbol = temporalFunctions.get(x.qualIdentifier.identifier.symbol)
+                val symbol = temporalFunctions.get(
+                        x.qualIdentifier.identifier.symbol)
                 symbol match {
                     case Some(_) => {
-                        return TermQualIdentifierTerms(x.qualIdentifier,
-                                (Seq(TermConst(time))++x.terms): _*) // Ugly
+                        return TermQualIdentifierTerms(
+                                x.qualIdentifier,
+                                (Seq(TermConst(time)) ++ x.terms): _*) // Ugly
                     }
                     case None => {
                         // Not a temporal function

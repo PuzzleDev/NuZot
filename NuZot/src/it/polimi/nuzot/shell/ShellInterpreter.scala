@@ -38,15 +38,23 @@ class ShellInterpreter extends DSLInterpreter {
         new Script()
     }
     
-    override def visitCommand(command: Command, computed: Script): Script = {
+    override def visitCommand(
+            command: Command, computed: Script): Script = {
         command match {
             case x: CommandSave => {
-                val filename = x.filename.substring(1,  x.filename.length() - 1)
+                val filename = x.filename.substring(
+                        1,  x.filename.length() - 1)
+                // TODO(msama): remove the save command
+                // which is the last added
                 innerSave(filename, original ++ computed)
+                // Filter the save command
                 return computed
             }
             case x: CommandLoad => {
-                val filename = x.filename.substring(1,  x.filename.length() - 1)
+                val filename = x.filename.substring(
+                        1,  x.filename.length() - 1)
+                // Return the loaded script instead 
+                // of the load command
                 return computed ++ innerLoad(filename)
             }
             case x: CommandExit => {

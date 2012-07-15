@@ -127,7 +127,7 @@ class LTLLogicDelegate extends LogicDelegate {
                 for (i <- 1 until ltl.temporalExt + 2) {
                     script = script :+ CommandAssert(
                             IFF(
-                                Term.call(Symbol(supportFz), Term.const(i)),
+                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
                             	ltl.expandTemporalFunctionsAtTime(
                             			And(opY, 
                             			    Or(opX, 
@@ -148,7 +148,7 @@ class LTLLogicDelegate extends LogicDelegate {
                 for (i <- 0 until ltl.temporalExt + 1) {
                     script = script :+ CommandAssert(
                             IFF(
-                                Term.call(Symbol(supportFz), Term.const(i)),
+                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
                             	ltl.expandTemporalFunctionsAtTime(
                             			And(opY, 
                             			    Or(opX, 
@@ -352,7 +352,7 @@ class LTLLogicDelegate extends LogicDelegate {
                     script = script :+ CommandAssert(
                             IFF(
                                 Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
-                            	ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
+                                ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
                         		)	
                     		)
                 }
