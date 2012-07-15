@@ -14,7 +14,7 @@ import it.polimi.nuzot.smt.grammar._
  * @author Michele Sama (m.sama@puzzledev.com)
  *
  */
-trait LogicDelegate extends DSLInterpreterDelegate {
+trait LogicDelegate extends DSLInterpreterDelegate[LTLInterpreter] {
     
     def expandTemporalBooleanOperator(
             ltl: LTLInterpreter,

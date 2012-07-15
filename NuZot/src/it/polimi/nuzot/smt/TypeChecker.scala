@@ -18,16 +18,18 @@ object TypeChecker {
 }
 
 class TypeChecker extends DSLInterpreter {
-	var scopeFunctionArgs = new Scope[Symbol, List[Sort]]()
-	var scopeFunctionReturnTypes = new Scope[Symbol, Sort]()
+	
+    var scopeFunctionArgs = new Scope[Symbol, List[Sort]]()
+	
+    var scopeFunctionReturnTypes = new Scope[Symbol, Sort]()
+	
 	var scopeSorts = new Scope[Symbol, Sort]()
 	scopeSorts.set(Symbol.Bool, Sort.Bool)
 	// Other sort will be added according to the current domain
 	
-	
 	var domain: Sort = Sort.Int
 	
-	protected def initialize(): Unit = {
+	override protected def initializeAttributes(): Unit = {
         // Set the number domain
         attributes.get(TypeChecker.domainKeyword) match {
             case Some(AttributeKeyVal(k, AttributeValueSymbol(Symbol.Int))) => {
@@ -47,9 +49,10 @@ class TypeChecker extends DSLInterpreter {
             }
         }
     }
+    
+    override protected def initializeDelegates(): Unit = {}
 	
 	override def generatePreconditions(): Script = {
-	    initialize()
 	    return new Script()
 	}
 	

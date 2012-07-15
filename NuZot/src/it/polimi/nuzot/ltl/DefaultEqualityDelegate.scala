@@ -6,6 +6,7 @@
 package it.polimi.nuzot.ltl
 
 import it.polimi.nuzot.smt.grammar._
+import it.polimi.nuzot.core.DSLInterpreter
 
 /**
  * @author Michele Sama (m.sama@puzzledev.com)
@@ -13,7 +14,7 @@ import it.polimi.nuzot.smt.grammar._
  */
 class DefaultEqualityDelegate extends EqualityDelegate {
 
-    override def generatePreconditions(ltl: LTLInterpreter): Script = {
+    override def generatePreconditions(interpreter: LTLInterpreter): Script = {
 	    return new Script()
     }
     

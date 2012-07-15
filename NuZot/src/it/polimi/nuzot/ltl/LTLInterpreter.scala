@@ -97,7 +97,7 @@ class LTLInterpreter() extends DSLInterpreter {
         }
     }
     
-    protected def initialize(): Unit = {
+    protected def initializeAttributes(): Unit = {
         // Set the number domain
         attributes.get(LTLInterpreter.domainKeyword) match {
             case Some(AttributeKeyVal(k, AttributeValueSymbol(Symbol.Int))) => {
@@ -150,12 +150,33 @@ class LTLInterpreter() extends DSLInterpreter {
                 // Nothing to be done
             }
         }
-        
+    }
+    
+    protected def initializeDelegates(): Unit = {
         // Load all the delegates
-        for (logic <- logics) {
-            loadLogic(logic)
+        for (delegate <- delegateClasses) {
+            delegate match {
+        	    case x: ArithmeticDelegate => {
+        	        _arithmeticDelegate = x
+        	    }
+        	    case x: LogicDelegate => {
+        	        _logicDelegate = x
+        	    }
+        	    case x: EqualityDelegate => {
+        	        _equalityDelegate = x
+        	    }
+        	    case _ => {
+        	        // Pass
+        	        /*
+        	        throw new IllegalArgumentException(
+        	                "Unknown delegate type: " + className + ".")
+        	               */
+        	    }
+        	}	
         }
     }
+    
+    
     
     def loadLogic(logic: Symbol) = {
         val className = logic.toString()
@@ -203,7 +224,6 @@ class LTLInterpreter() extends DSLInterpreter {
      * (assert (or (! loopex) (and (< 0 iLoop) (<= iLoop 5))))
      */
     override def generatePreconditions(): Script = {
-        initialize()
 	    var script = new Script()
 	    return script ++ equalityDelegate.generatePreconditions(this) ++
 	    		arithmeticDelegate.generatePreconditions(this) ++

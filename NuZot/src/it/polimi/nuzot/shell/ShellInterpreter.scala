@@ -33,7 +33,11 @@ class ShellInterpreter extends DSLInterpreter {
     var _initializing = true
     private def initializationDone(): Unit = 
         	_initializing = false
+        
+    protected def initializeAttributes(): Unit = {};
     
+    protected def initializeDelegates(): Unit = {};
+        	
     def generatePreconditions(): Script = {
         new Script()
     }

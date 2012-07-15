@@ -7,6 +7,7 @@ package it.polimi.nuzot.ltl
 
 import it.polimi.nuzot.ltl.grammar._
 import it.polimi.nuzot.smt.grammar._
+import it.polimi.nuzot.core.DSLInterpreter
 
 /**
  * @author Michele Sama (m.sama@puzzledev.com)
@@ -22,13 +23,13 @@ class LTLLogicDelegate extends LogicDelegate {
      * (declare-fun loopex () Bool)
      * (assert (or (! loopex) (and (< 0 iLoop) (<= iLoop 5))))
      */
-    override def generatePreconditions(ltl: LTLInterpreter): Script = {
+    override def generatePreconditions(interpreter: LTLInterpreter): Script = {
 	    var script = new Script()
 	    
 	    // Adds (declare-fun iLoop () Int)
 	    script = script :+ CommandDeclareFun(
 	            LTLInterpreter.iLoop,
-	            List(), ltl.domain)
+	            List(), interpreter.domain)
 	    
 	    // Adds (declare-fun loopex () Bool)
 	    script = script :+ CommandDeclareFun(
@@ -41,12 +42,12 @@ class LTLLogicDelegate extends LogicDelegate {
                     Not(Term.call(LTLInterpreter.loopEx)),
                     And(
                         LT(
-                            TermConst(ltl.const(0)),
+                            TermConst(interpreter.const(0)),
                             Term.call(LTLInterpreter.iLoop)
                     	),
                         LE(
                             Term.call(LTLInterpreter.iLoop),
-                            TermConst(ltl.const(ltl.temporalExt))
+                            TermConst(interpreter.const(interpreter.temporalExt))
                     	)
             		)
                 )

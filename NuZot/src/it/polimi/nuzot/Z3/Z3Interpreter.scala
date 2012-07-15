@@ -31,6 +31,10 @@ class Z3Interpreter extends DSLInterpreter {
 	
 	var scopeSortedVar = new Scope[Symbol, Z3AST]()
     
+	override protected def initializeAttributes(): Unit = {}
+    
+    override protected def initializeDelegates(): Unit = {}
+	
 	override def generatePreconditions(): Script = {
 	    return new Script()
 	}

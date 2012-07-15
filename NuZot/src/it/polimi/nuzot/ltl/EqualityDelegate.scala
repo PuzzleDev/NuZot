@@ -15,7 +15,8 @@ import it.polimi.nuzot.smt.grammar._
  * Defines a delegate which will do the temporal expansion of
  * equalities and inequalities.
  */
-trait EqualityDelegate extends DSLInterpreterDelegate {
+trait EqualityDelegate 
+		extends DSLInterpreterDelegate[LTLInterpreter] {
     
     def expandEqualityOperator(
             ltl: LTLInterpreter,

@@ -19,6 +19,9 @@ class DSLInterpreterTestCase {
     @Test
     def testSetParamValues(): Unit = {
         class MockInterpreter extends DSLInterpreter {
+            protected def initializeAttributes(): Unit = {};
+            protected def initializeDelegates(): Unit = {};
+            
             def generatePreconditions(): Script = {
                 new Script()
             }

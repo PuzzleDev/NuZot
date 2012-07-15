@@ -11,13 +11,15 @@ import it.polimi.nuzot.ltl.LTLInterpreter
 /**
  * @author Michele Sama (m.sama@puzzledev.com)
  *
+ * Define an interpreter delegate. Each interpreter 
+ * can have as many delegates as required, but only one
+ * of each type can be active at the same time.
+ * 
+ * <p>Delegates are instantiated by class name using
+ * the default constructor. Subclasses must have a
+ * public default constructor.
  */
-trait DSLInterpreterDelegate {
-	
-    var _attributes: List[LogicAttribute] = List()
-    def attributes(attributes: List[LogicAttribute]) = {
-        _attributes = attributes
-    }
+trait DSLInterpreterDelegate[T <: DSLInterpreter] {
     
-    def generatePreconditions(ltl: LTLInterpreter): Script
+    def generatePreconditions(interpreter: T): Script
 }

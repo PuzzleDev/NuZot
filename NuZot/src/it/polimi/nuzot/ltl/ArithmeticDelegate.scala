@@ -17,7 +17,8 @@ import it.polimi.nuzot.smt.grammar._
  * operators (D^n) -> D, where D is the current domain.
  * 
  */
-trait ArithmeticDelegate extends DSLInterpreterDelegate {
+trait ArithmeticDelegate extends
+		DSLInterpreterDelegate[LTLInterpreter] {
     
     def expandArithmeticTemporalOperator(
             ltl: LTLInterpreter,
