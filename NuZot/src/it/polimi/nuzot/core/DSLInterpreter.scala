@@ -90,7 +90,7 @@ trait DSLInterpreter {
 	
 	final private def innerVisitCommand(command: Command, computed: Script): Script = {
         command match {
-            case c: InitCommand => {
+            case initCommand: InitCommand => {
                 // Throws an error if the interpreter is not
                 // initializing anymore.
                 if (_initializing == false) {
@@ -98,7 +98,7 @@ trait DSLInterpreter {
                             "Initialization commands can only be interpreted " +
                             "at the beginnin of the script")
                 }
-                c match {
+                initCommand match {
 	                case x: InitCommandSetLogic => {
 		                logics = 
 		                    logics :+ x.symbol
@@ -108,17 +108,17 @@ trait DSLInterpreter {
 		                    attributes ++: Map(x.attribute.keyword -> x.attribute)
 		            }                    
                 }
-		        return visitCommand(c, computed)
+		        return visitCommand(initCommand, computed)
             }
             
-            case c: Command => {
+            case com: Command => {
                 // After the first command the system
                 // is not initializing anymore
                 var script = computed
 
                 if (_initializing) {
                 	_initializing = false
-                	c match {
+                	com match {
 	                    case x: CommandExit => {
 	                        // The first instruction is an (exit)
 	                    	// Skip initialization
@@ -128,7 +128,7 @@ trait DSLInterpreter {
 	                    }
 	                }
                 }
-                return visitCommand(c, script)
+                return visitCommand(com, script)
             }
         }
     }

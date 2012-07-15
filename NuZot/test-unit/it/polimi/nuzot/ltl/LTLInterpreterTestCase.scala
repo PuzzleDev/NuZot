@@ -7,6 +7,7 @@ package it.polimi.nuzot.ltl
 
 import org.junit._
 import Assert._
+
 import it.polimi.nuzot.shell.ShellInterpreter
 import it.polimi.nuzot.smt.grammar._
 import it.polimi.nuzot.Z3.Z3Interpreter

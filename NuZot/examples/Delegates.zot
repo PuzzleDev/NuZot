@@ -1,0 +1,15 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Delegates example
+;;
+;; Reassign all the default delegates
+;; just for fun
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(set-logic it.polimi.nuzot.ltl.DefaultEqualityDelegate)
+(set-logic it.polimi.nuzot.ltl.FOArithmeticDelegate)
+(set-logic it.polimi.nuzot.ltl.LTLLogicDelegate)
+(set-info :k 10.0)
+(set-info :domain Real)
+(declare-tfun x () Real)
+(assert (next (= x 0.1)))
+(check-sat)
+(get-model)

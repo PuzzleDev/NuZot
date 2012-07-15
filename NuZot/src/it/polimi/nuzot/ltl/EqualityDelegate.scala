@@ -12,6 +12,8 @@ import it.polimi.nuzot.smt.grammar._
 /**
  * @author Michele Sama (m.sama@puzzledev.com)
  *
+ * Defines a delegate which will do the temporal expansion of
+ * equalities and inequalities.
  */
 trait EqualityDelegate extends DSLInterpreterDelegate {
     

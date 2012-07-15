@@ -44,9 +44,23 @@ object LTLInterpreter {
 
 class LTLInterpreter() extends DSLInterpreter {
     
-    private var logicDelegate: LogicDelegate = new LTLLogicDelegate()
-    private var arithmeticDelegate: ArithmeticDelegate = new FOArithmeticDelegate()
-    private var equalityDelegate: EqualityDelegate = new DefaultEqualityDelegate()
+    private var _logicDelegate: LogicDelegate = 
+        	new LTLLogicDelegate()
+    def logicDelegate(): LogicDelegate = {
+    	return _logicDelegate
+    }
+    
+    private var _arithmeticDelegate: ArithmeticDelegate = 
+        	new FOArithmeticDelegate()
+    def arithmeticDelegate(): ArithmeticDelegate = {
+        return _arithmeticDelegate
+    }
+    
+    private var _equalityDelegate: EqualityDelegate =
+        	new DefaultEqualityDelegate()
+    def equalityDelegate(): EqualityDelegate = {
+        return _equalityDelegate
+    }
     
     var temporalFunctions = new Scope[Symbol, Sort]()    
     
@@ -150,20 +164,20 @@ class LTLInterpreter() extends DSLInterpreter {
         	val instance = clazz.newInstance()
         	instance match {
         	    case x: ArithmeticDelegate => {
-        	        arithmeticDelegate = x
-        	        // TODO(michele.sama): set attributes
+        	        _arithmeticDelegate = x
         	    }
         	    case x: LogicDelegate => {
-        	        logicDelegate = x
-        	        // TODO(michele.sama): set attributes
+        	        _logicDelegate = x
         	    }
         	    case x: EqualityDelegate => {
-        	        equalityDelegate = x
-        	        // TODO(michele.sama): set attributes
+        	        _equalityDelegate = x
         	    }
         	    case _ => {
+        	        // Pass
+        	        /*
         	        throw new IllegalArgumentException(
         	                "Unknown delegate type: " + className + ".")
+        	               */
         	    }
         	}	
         } catch {

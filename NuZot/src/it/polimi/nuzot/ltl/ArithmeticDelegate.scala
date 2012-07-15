@@ -11,7 +11,11 @@ import it.polimi.nuzot.smt.grammar._
 
 /**
  * @author Michele Sama (m.sama@puzzledev.com)
- *
+ * 
+ * Defines a delegate in charge of temporal expansion of arithmetic
+ * operators, where we define arithmetic operators all those
+ * operators (D^n) -> D, where D is the current domain.
+ * 
  */
 trait ArithmeticDelegate extends DSLInterpreterDelegate {
     
