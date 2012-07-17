@@ -75,6 +75,7 @@ class LTLInterpreter() extends DSLInterpreter {
     	    throw new IllegalStateException(
     	            "Trying to change the domain while not initializing.")
     	}
+    	_domain = sort
     }
     
     def logicDelegate(): LogicDelegate = {

@@ -28,13 +28,15 @@ object Command {
     }
 }
 
-sealed case class CommandSave(val filename: String) extends SMTCommand {
+trait ShellCommand extends SMTCommand
+
+sealed case class CommandSave(val filename: String) extends ShellCommand {
     override def toString(): String = {
         return "(" + Command.saveLabel + " " + filename + ")"
     }
 }
 
-sealed case class CommandLoad(val filename: String) extends SMTCommand {
+sealed case class CommandLoad(val filename: String) extends ShellCommand {
     override def toString(): String = {
         return "(" + Command.loadLabel +" " + filename + ")"
     }

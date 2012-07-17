@@ -5,8 +5,11 @@
  */
 package it.polimi.nuzot.core
 
-import it.polimi.nuzot.smt.grammar._
 import scala.util.parsing.combinator.JavaTokenParsers
+
+import it.polimi.nuzot.smt.grammar._
+import it.polimi.nuzot.shell.grammar.ShellCommand
+
 
 /**
  * @author Michele Sama (m.sama@puzzledev.com)
@@ -172,7 +175,12 @@ trait DSLInterpreter {
                 }
 		        return visitCommand(initCommand, computed)
             }
-            
+            case shellCommand: ShellCommand => {
+                // Shell command are treated differently than other commands
+                // This allows you to load a script with  its 
+                // initializations inside.
+                return visitCommand(shellCommand, computed)
+            }
             case com: Command => {
                 // After the first command the system
                 // is not initializing anymore

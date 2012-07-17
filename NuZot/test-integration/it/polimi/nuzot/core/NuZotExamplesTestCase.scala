@@ -60,7 +60,7 @@ class NuZotExamplesTestCase {
     
     @Test
     def testContraddictAlways(): Unit = {
-        var model = assertFileExecution("examples/ltl/ContraddictAlways.zot", false);
+        var model = assertFileExecution("examples/ltl/ContradictAlways.zot", false);
     }
     
 }
