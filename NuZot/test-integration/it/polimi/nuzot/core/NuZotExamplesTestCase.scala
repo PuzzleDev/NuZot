@@ -101,4 +101,10 @@ class NuZotExamplesTestCase {
         var model = assertFileExecution(
                 "examples/ltl/YesterdayAndYesterday.zot", false);
     }
+    
+    @Test
+    def testAndReleaseImp(): Unit = {
+        var model = assertFileExecution(
+                "examples/ltl/AndReleaseImp.zot", true);
+    }
 }
