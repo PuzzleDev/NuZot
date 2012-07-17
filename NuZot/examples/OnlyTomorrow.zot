@@ -3,7 +3,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (set-info :k 5)
 (declare-tfun x () Bool)
-(assert (! x))
+(assert (not x))
 (assert (next x))
-(assert (! (next (next x))))
+(assert (not (next (next x))))
 (get-model)
