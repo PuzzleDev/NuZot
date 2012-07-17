@@ -55,6 +55,16 @@ trait DSLInterpreter {
 		_next = value
 		return this
 	} 
+    
+    /**
+     * Get the initialization status of this interpreter.
+     * 
+     * @return <code>true</code> if this interpreter is 
+     * 		still initializing, <code>false</code> otherwise.
+     */
+    def isInitializing(): Boolean = {
+        return _initializing
+    }
 		
     /**
      * Append a command to the list of

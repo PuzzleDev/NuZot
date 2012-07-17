@@ -169,7 +169,7 @@ class LTLInterpreterTestCase {
             "(set-info :k 5.0)\n" +
         	"(declare-tfun x () Bool)"
             
-        interpreter.domain = Sort.Real  
+        interpreter.domain(Sort.Real)
         val expected = 
             "(set-info :domain Real)\n" +
             "(set-info :k 5.0)\n" +

@@ -44,27 +44,51 @@ object LTLInterpreter {
 
 class LTLInterpreter() extends DSLInterpreter {
     
+    // Defines the numeric domain
+    // The default one is Integer
+    private var _domain: Sort = Sort.Int
+    
+    // A boolean logic delegate
     private var _logicDelegate: LogicDelegate = 
         	new LTLLogicDelegate()
+    
+    // Arithmetic delegate
+    private var _arithmeticDelegate: ArithmeticDelegate = 
+        	new FOArithmeticDelegate()
+    
+    // Equality delegate
+    private var _equalityDelegate: EqualityDelegate =
+        	new DefaultEqualityDelegate()
+    
+    // Declared temporal functions.
+    var temporalFunctions = new Scope[Symbol, Sort]()    
+    
+    // The temporal extension K
+    var _temporalExt: Int = -1
+    
+    def domain(): Sort = {
+    	_domain
+    }
+    
+    def domain(sort: Sort): Unit = {
+    	if (!isInitializing()) {
+    	    throw new IllegalStateException(
+    	            "Trying to change the domain while not initializing.")
+    	}
+    }
+    
     def logicDelegate(): LogicDelegate = {
     	return _logicDelegate
     }
     
-    private var _arithmeticDelegate: ArithmeticDelegate = 
-        	new FOArithmeticDelegate()
     def arithmeticDelegate(): ArithmeticDelegate = {
         return _arithmeticDelegate
     }
     
-    private var _equalityDelegate: EqualityDelegate =
-        	new DefaultEqualityDelegate()
     def equalityDelegate(): EqualityDelegate = {
         return _equalityDelegate
     }
     
-    var temporalFunctions = new Scope[Symbol, Sort]()    
-    
-    var _temporalExt: Int = -1
     def temporalExt(): Int = {
         if (_temporalExt < 0) {
             throw new IllegalStateException(
@@ -75,6 +99,7 @@ class LTLInterpreter() extends DSLInterpreter {
             _temporalExt
         }
     }
+    
     def temporalExt(value : Int): Unit = {
         if (_temporalExt != -1 ) {
             throw new IllegalStateException(
@@ -83,8 +108,6 @@ class LTLInterpreter() extends DSLInterpreter {
         	_temporalExt = value
         }
     }
-    
-    var domain: Sort = Sort.Int
     
     def const(value: Int): SpecConstant = {
         domain match {
@@ -101,10 +124,10 @@ class LTLInterpreter() extends DSLInterpreter {
         // Set the number domain
         attributes.get(LTLInterpreter.domainKeyword) match {
             case Some(AttributeKeyVal(k, AttributeValueSymbol(Symbol.Int))) => {
-                domain = Sort.Int
+                _domain = Sort.Int
             }
             case Some(AttributeKeyVal(k, AttributeValueSymbol(Symbol.Real))) => {
-                domain = Sort.Real
+                _domain = Sort.Real
             }
             case Some(x) => {
                 throw new IllegalArgumentException(
