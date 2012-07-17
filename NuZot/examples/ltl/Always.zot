@@ -1,11 +1,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Always
+;;
+;; The given variable x should always be true
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (set-info :domain Int)
 (set-info :k 10)
-(declare-tfun S () Bool)
-(check-sat)
-(get-model)
-(push)
-(assert (release false S))
+(declare-tfun x () Bool)
+(assert (release false x))
 (get-model)

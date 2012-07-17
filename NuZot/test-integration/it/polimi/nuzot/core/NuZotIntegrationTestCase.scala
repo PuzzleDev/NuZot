@@ -7,6 +7,7 @@ package it.polimi.nuzot.core
 
 import org.junit._
 import Assert._
+
 import it.polimi.nuzot.ltl.LTLInterpreter
 import it.polimi.nuzot.shell.ShellParser
 import it.polimi.nuzot.shell.ShellInterpreter
@@ -21,7 +22,7 @@ import z3.scala.Z3Model
  *
  */
 class NuZotIntegrationTestCase {
-
+    
     /**
      * Assert the correct execution of a script
      * in a working environment.
