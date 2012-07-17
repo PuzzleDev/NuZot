@@ -170,6 +170,7 @@ class LTLLogicDelegate extends LogicDelegate {
 		                Symbol(i_eve),
 		                List(),
 		                ltl.domain)
+		        script = script ++ ltl.assertDiscreteTemporalValue(Symbol(i_eve))
 		                
 		        val termSymbol = opY match {
 		            case k: TermQualIdentifierTerms => {
@@ -205,6 +206,8 @@ class LTLLogicDelegate extends LogicDelegate {
 		                        )
 		                )
 		        )
+		        
+		        
                 
                 script = ltl.expandSubformula(opX, script) 
                 script = ltl.expandSubformula(opY, script) 
@@ -247,6 +250,7 @@ class LTLLogicDelegate extends LogicDelegate {
 		                Symbol(i_eve),
 		                List(),
 		                ltl.domain)
+		        script = script ++ ltl.assertDiscreteTemporalValue(Symbol(i_eve))
 		                
 		        val termSymbol = opY match {
 		            case k: TermQualIdentifierTerms => {

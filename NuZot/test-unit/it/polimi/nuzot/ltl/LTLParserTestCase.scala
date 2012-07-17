@@ -19,7 +19,7 @@ class LTLParserTestCase {
     
     @Test
     def testParseAssertT = {
-        val command = "(assert-t (! x) 4)"
+        val command = "(assert-t (not x) 4)"
         var res = parser.parseAll(parser.command, command)
         assertEquals(command, res.getOrElse().toString())
     }

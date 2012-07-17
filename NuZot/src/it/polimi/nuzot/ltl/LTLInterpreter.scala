@@ -226,23 +226,31 @@ class LTLInterpreter() extends DSLInterpreter {
     override def generatePreconditions(): Script = {
 	    var script = new Script()
 	    
-	    script = script ++ equalityDelegate.generatePreconditions(this) ++
+	    return script ++ equalityDelegate.generatePreconditions(this) ++
 	    		arithmeticDelegate.generatePreconditions(this) ++
-	    		logicDelegate.generatePreconditions(this)
-	    
-	    domain match {
+	    		logicDelegate.generatePreconditions(this) ++
+	    		assertDiscreteTemporalValue(LTLInterpreter.iLoop)	    
+	}
+    
+    /**
+     * Force a numeric symbol to be assigned only with a
+     * discrete value from 0 to K+1.
+     */
+    def assertDiscreteTemporalValue(symbol: Symbol): Script = {
+        domain match {
 	        case Sort.Real => {
 	            var terms: List[Term] = List()
 	            for (i <- 0 to _temporalExt + 1) {
-	               terms = EQ(Term.call(LTLInterpreter.iLoop), TermConst(const(i))) :: terms
+	               terms = EQ(Term.call(symbol),
+	                         TermConst(const(i))) :: terms
 	            }
-	            script = script :+ CommandAssert(
-	                    Or(terms: _*))
-	        } case _ => {}
+	            return Script(List(
+	                    CommandAssert(Or(terms: _*))))
+	        } case _ => {
+	            return new Script()
+	        }
 	    }
-	    
-	    return script
-	}
+    }
     
     /**
      * Recursively increase the arity of all the temporal operators and 

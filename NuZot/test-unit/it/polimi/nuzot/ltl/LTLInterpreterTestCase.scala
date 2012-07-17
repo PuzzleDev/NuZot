@@ -28,19 +28,30 @@ class LTLInterpreterTestCase {
 
     val interpreter = new LTLInterpreter()
     
-    def preconditions(interpreter: LTLInterpreter): String =
-        	"(declare-fun iLoop () " + interpreter.domain + ")\n" +
+    def preconditions(interpreter: LTLInterpreter): String = {
+        var precond = 	"(declare-fun iLoop () " + interpreter.domain + ")\n" +
         	"(declare-fun loopex () Bool)\n" +
-			"(assert (or (! loopex) (and (< " + interpreter.const(0) + " iLoop) (<= iLoop " + 
-				interpreter.const(LTLInterpreterTestCase.k) +"))))"
+        	"(assert (or (not loopex) (and (< " + 
+			interpreter.const(0) + 
+			" iLoop) (<= iLoop " + 
+			interpreter.const(LTLInterpreterTestCase.k) +"))))"
+        
+    	if (interpreter.domain == Sort.Real) {
+    	   precond += "\n(assert (or (= iLoop 6.0) (= iLoop 5.0) " +
+    	   		"(= iLoop 4.0) (= iLoop 3.0) (= iLoop 2.0) (= iLoop 1.0) (= iLoop 0.0)))"
+    	}
+        
+		
+		return precond
+    }
         	
     def supportFz(name: String, time: Int): String = {
         return "(declare-fun " + name + " (Int) Bool)\n" +
      			"(assert (" + name + " " + time + "))\n" +
-     			"(assert (-> " + LTLInterpreter.loopExLabel + " (iff (" + 
+     			"(assert (=> " + LTLInterpreter.loopExLabel + " (= (" + 
      					name + " " + (LTLInterpreterTestCase.k + 1) + ") (" + 
      					name + " " + LTLInterpreter.iLoopLabel + "))))\n" +
-     			"(assert (-> (! " + LTLInterpreter.loopExLabel + ") (! (" + 
+     			"(assert (=> (not " + LTLInterpreter.loopExLabel + ") (not (" + 
      					name + " " + (LTLInterpreterTestCase.k + 1) + "))))"
     }
     
@@ -115,49 +126,25 @@ class LTLInterpreterTestCase {
             	"(set-info :k 5)\n" +
             	"(declare-tfun x () Bool)\n" +
         		"(assert-t x 2)\n" +
-        		"(assert-t (! x) 4)" 
+        		"(assert-t (not x) 4)" 
 
         val expected = 
             	"(set-info :k 5)\n" +
             	preconditions(interpreter) + "\n" +
 				"(declare-fun x (Int) Bool)\n" +
 				"(assert (x 2))\n" +
-				"(assert (and loopex (iff (x (- iLoop 1)) (x 5))))\n" +
+				"(assert (and loopex (= (x (- iLoop 1)) (x 5))))\n" +
 				supportFz("zot-p0", 4) + "\n" +
-				"(assert (iff (zot-p0 0) (! (x 0))))\n" +
-				"(assert (iff (zot-p0 1) (! (x 1))))\n" +
-				"(assert (iff (zot-p0 2) (! (x 2))))\n" +
-				"(assert (iff (zot-p0 3) (! (x 3))))\n" +
-				"(assert (iff (zot-p0 4) (! (x 4))))\n" +
-				"(assert (iff (zot-p0 5) (! (x 5))))\n" +
-				"(assert (iff (zot-p0 6) (! (x 6))))\n" +
-				"(assert (and loopex (iff (x (- iLoop 1)) (x 5))))"
+				"(assert (= (zot-p0 0) (not (x 0))))\n" +
+				"(assert (= (zot-p0 1) (not (x 1))))\n" +
+				"(assert (= (zot-p0 2) (not (x 2))))\n" +
+				"(assert (= (zot-p0 3) (not (x 3))))\n" +
+				"(assert (= (zot-p0 4) (not (x 4))))\n" +
+				"(assert (= (zot-p0 5) (not (x 5))))\n" +
+				"(assert (= (zot-p0 6) (not (x 6))))\n" +
+				"(assert (and loopex (= (x (- iLoop 1)) (x 5))))"
         
         assertExecution(input, expected, true)
-    }
-    
-    @Test
-    def testVisitPreconditionsInt() = {
-        val k = AttributeKeyVal(Keyword(":k"),
-        		AttributeValueSpecConst(SpecIntConstant(5)))
-        
-        interpreter.attributes = Map(k.keyword -> k)
-         
-        interpreter.domain = Sort.Int
-        assertEquals(preconditions(interpreter),
-                interpreter.generatePreconditions().toString())
-    }
-    
-    @Test
-    def testVisitPreconditionsReal() = {
-        val k = AttributeKeyVal(Keyword(":k"),
-        		AttributeValueSpecConst(SpecDoubleConstant(5)))
-        
-        interpreter.attributes = Map(k.keyword -> k)
-        
-        interpreter.domain = Sort.Real
-        assertEquals(preconditions(interpreter),
-                interpreter.generatePreconditions().toString())
     }
     
     @Test
@@ -204,13 +191,13 @@ class LTLInterpreterTestCase {
             	preconditions(interpreter) + "\n" +
      			"(declare-fun x (Int) Bool)\n" +
      			supportFz("zot-p0", 1) + "\n" +
-     			"(assert (iff (zot-p0 0) (x 1)))\n" +
-     			"(assert (iff (zot-p0 1) (x 2)))\n" +
-     			"(assert (iff (zot-p0 2) (x 3)))\n" +
-     			"(assert (iff (zot-p0 3) (x 4)))\n" +
-     			"(assert (iff (zot-p0 4) (x 5)))\n" +
-     			"(assert (iff (zot-p0 5) (x 6)))\n" +
-     			"(assert (and loopex (iff (x (- iLoop 1)) (x 5))))"
+     			"(assert (= (zot-p0 0) (x 1)))\n" +
+     			"(assert (= (zot-p0 1) (x 2)))\n" +
+     			"(assert (= (zot-p0 2) (x 3)))\n" +
+     			"(assert (= (zot-p0 3) (x 4)))\n" +
+     			"(assert (= (zot-p0 4) (x 5)))\n" +
+     			"(assert (= (zot-p0 5) (x 6)))\n" +
+     			"(assert (and loopex (= (x (- iLoop 1)) (x 5))))"
      			
      	 assertExecution(input, expected, true)
     }
@@ -227,13 +214,13 @@ class LTLInterpreterTestCase {
             	preconditions(interpreter) + "\n" +
      			"(declare-fun x (Int) Bool)\n" +
      			supportFz("zot-p0", 1) + "\n" +
-     			"(assert (iff (zot-p0 1) (x 0)))\n" +
-     			"(assert (iff (zot-p0 2) (x 1)))\n" +
-     			"(assert (iff (zot-p0 3) (x 2)))\n" +
-     			"(assert (iff (zot-p0 4) (x 3)))\n" +
-     			"(assert (iff (zot-p0 5) (x 4)))\n" +
-     			"(assert (iff (zot-p0 6) (x 5)))\n" +
-     			"(assert (and loopex (iff (x (- iLoop 1)) (x 5))))"
+     			"(assert (= (zot-p0 1) (x 0)))\n" +
+     			"(assert (= (zot-p0 2) (x 1)))\n" +
+     			"(assert (= (zot-p0 3) (x 2)))\n" +
+     			"(assert (= (zot-p0 4) (x 3)))\n" +
+     			"(assert (= (zot-p0 5) (x 4)))\n" +
+     			"(assert (= (zot-p0 6) (x 5)))\n" +
+     			"(assert (and loopex (= (x (- iLoop 1)) (x 5))))"
      			
      	assertExecution(input, expected, true)
     }
@@ -243,21 +230,21 @@ class LTLInterpreterTestCase {
         val input =
             	"(set-info :k 5)\n" +
             	"(declare-tfun x () Bool)\n" +
-        		"(assert (! x))"
+        		"(assert (not x))"
         
         val expected = 
             	"(set-info :k 5)\n" +
             	preconditions(interpreter) + "\n" +
      			"(declare-fun x (Int) Bool)\n" +
      			supportFz("zot-p0", 1) + "\n" +
-     			"(assert (iff (zot-p0 0) (! (x 0))))\n" +
-     			"(assert (iff (zot-p0 1) (! (x 1))))\n" +
-     			"(assert (iff (zot-p0 2) (! (x 2))))\n" +
-     			"(assert (iff (zot-p0 3) (! (x 3))))\n" +
-     			"(assert (iff (zot-p0 4) (! (x 4))))\n" +
-     			"(assert (iff (zot-p0 5) (! (x 5))))\n" +
-     			"(assert (iff (zot-p0 6) (! (x 6))))\n" +
-     			"(assert (and loopex (iff (x (- iLoop 1)) (x 5))))"
+     			"(assert (= (zot-p0 0) (not (x 0))))\n" +
+     			"(assert (= (zot-p0 1) (not (x 1))))\n" +
+     			"(assert (= (zot-p0 2) (not (x 2))))\n" +
+     			"(assert (= (zot-p0 3) (not (x 3))))\n" +
+     			"(assert (= (zot-p0 4) (not (x 4))))\n" +
+     			"(assert (= (zot-p0 5) (not (x 5))))\n" +
+     			"(assert (= (zot-p0 6) (not (x 6))))\n" +
+     			"(assert (and loopex (= (x (- iLoop 1)) (x 5))))"
      	
      	assertExecution(input, expected, true)
     }
@@ -276,15 +263,15 @@ class LTLInterpreterTestCase {
      			"(declare-fun x (Int) Bool)\n" +
      			"(declare-fun y (Int) Bool)\n" +
      			supportFz("zot-p0", 1) + "\n" +
-     			"(assert (iff (zot-p0 0) (and (x 0) (y 0))))\n" +
-     			"(assert (iff (zot-p0 1) (and (x 1) (y 1))))\n" +
-     			"(assert (iff (zot-p0 2) (and (x 2) (y 2))))\n" +
-     			"(assert (iff (zot-p0 3) (and (x 3) (y 3))))\n" +
-     			"(assert (iff (zot-p0 4) (and (x 4) (y 4))))\n" +
-     			"(assert (iff (zot-p0 5) (and (x 5) (y 5))))\n" +
-     			"(assert (iff (zot-p0 6) (and (x 6) (y 6))))\n" +
-     			"(assert (and loopex (iff (x (- iLoop 1)) (x 5))))\n" +
-     			"(assert (and loopex (iff (y (- iLoop 1)) (y 5))))"
+     			"(assert (= (zot-p0 0) (and (x 0) (y 0))))\n" +
+     			"(assert (= (zot-p0 1) (and (x 1) (y 1))))\n" +
+     			"(assert (= (zot-p0 2) (and (x 2) (y 2))))\n" +
+     			"(assert (= (zot-p0 3) (and (x 3) (y 3))))\n" +
+     			"(assert (= (zot-p0 4) (and (x 4) (y 4))))\n" +
+     			"(assert (= (zot-p0 5) (and (x 5) (y 5))))\n" +
+     			"(assert (= (zot-p0 6) (and (x 6) (y 6))))\n" +
+     			"(assert (and loopex (= (x (- iLoop 1)) (x 5))))\n" +
+     			"(assert (and loopex (= (y (- iLoop 1)) (y 5))))"
      	
      	assertExecution(input, expected, true)
     }
@@ -303,15 +290,15 @@ class LTLInterpreterTestCase {
      			"(declare-fun x (Int) Bool)\n" +
      			"(declare-fun y (Int) Bool)\n" +
      			supportFz("zot-p0", 1) + "\n" +
-     			"(assert (iff (zot-p0 0) (or (x 0) (y 0))))\n" +
-     			"(assert (iff (zot-p0 1) (or (x 1) (y 1))))\n" +
-     			"(assert (iff (zot-p0 2) (or (x 2) (y 2))))\n" +
-     			"(assert (iff (zot-p0 3) (or (x 3) (y 3))))\n" +
-     			"(assert (iff (zot-p0 4) (or (x 4) (y 4))))\n" +
-     			"(assert (iff (zot-p0 5) (or (x 5) (y 5))))\n" +
-     			"(assert (iff (zot-p0 6) (or (x 6) (y 6))))\n" +
-     			"(assert (and loopex (iff (x (- iLoop 1)) (x 5))))\n" +
-     			"(assert (and loopex (iff (y (- iLoop 1)) (y 5))))"
+     			"(assert (= (zot-p0 0) (or (x 0) (y 0))))\n" +
+     			"(assert (= (zot-p0 1) (or (x 1) (y 1))))\n" +
+     			"(assert (= (zot-p0 2) (or (x 2) (y 2))))\n" +
+     			"(assert (= (zot-p0 3) (or (x 3) (y 3))))\n" +
+     			"(assert (= (zot-p0 4) (or (x 4) (y 4))))\n" +
+     			"(assert (= (zot-p0 5) (or (x 5) (y 5))))\n" +
+     			"(assert (= (zot-p0 6) (or (x 6) (y 6))))\n" +
+     			"(assert (and loopex (= (x (- iLoop 1)) (x 5))))\n" +
+     			"(assert (and loopex (= (y (- iLoop 1)) (y 5))))"
      			
      	 assertExecution(input, expected, true)
     }
@@ -330,17 +317,17 @@ class LTLInterpreterTestCase {
      			"(declare-fun x (Int) Bool)\n" +
      			"(declare-fun y (Int) Bool)\n" +
      			supportFz("zot-p0", 1) + "\n" +
-     			"(assert (iff (zot-p0 0) (or (y 0) (and (x 0) (zot-p0 1)))))\n" +
-     			"(assert (iff (zot-p0 1) (or (y 1) (and (x 1) (zot-p0 2)))))\n" +
-     			"(assert (iff (zot-p0 2) (or (y 2) (and (x 2) (zot-p0 3)))))\n" +
-     			"(assert (iff (zot-p0 3) (or (y 3) (and (x 3) (zot-p0 4)))))\n" +
-     			"(assert (iff (zot-p0 4) (or (y 4) (and (x 4) (zot-p0 5)))))\n" +
-     			"(assert (iff (zot-p0 5) (or (y 5) (and (x 5) (zot-p0 6)))))\n" +
+     			"(assert (= (zot-p0 0) (or (y 0) (and (x 0) (zot-p0 1)))))\n" +
+     			"(assert (= (zot-p0 1) (or (y 1) (and (x 1) (zot-p0 2)))))\n" +
+     			"(assert (= (zot-p0 2) (or (y 2) (and (x 2) (zot-p0 3)))))\n" +
+     			"(assert (= (zot-p0 3) (or (y 3) (and (x 3) (zot-p0 4)))))\n" +
+     			"(assert (= (zot-p0 4) (or (y 4) (and (x 4) (zot-p0 5)))))\n" +
+     			"(assert (= (zot-p0 5) (or (y 5) (and (x 5) (zot-p0 6)))))\n" +
      			"(declare-fun i_eve_zot-p0 () Int)\n" +
-     			"(assert (-> loopex (-> (zot-p0 5) (and (<= iLoop i_eve_zot-p0) " +
-     				"(<= i_eve_zot-p0 5) (zot-p0 i_eve_zot-p0)))))\n" +
-     			"(assert (and loopex (iff (x (- iLoop 1)) (x 5))))\n" +
-     			"(assert (and loopex (iff (y (- iLoop 1)) (y 5))))"
+     			"(assert (=> loopex (=> (zot-p0 5) (and (<= iLoop i_eve_zot-p0) " +
+     				"(<= i_eve_zot-p0 5) (y i_eve_zot-p0)))))\n" +
+     			"(assert (and loopex (= (x (- iLoop 1)) (x 5))))\n" +
+     			"(assert (and loopex (= (y (- iLoop 1)) (y 5))))"
      			
      	
      	assertExecution(input, expected, true)
@@ -360,17 +347,17 @@ class LTLInterpreterTestCase {
      			"(declare-fun x (Int) Bool)\n" +
      			"(declare-fun y (Int) Bool)\n" +
      			supportFz("zot-p0", 1) + "\n" +
-     			"(assert (iff (zot-p0 0) (and (y 0) (or (x 0) (zot-p0 1)))))\n" +
-     			"(assert (iff (zot-p0 1) (and (y 1) (or (x 1) (zot-p0 2)))))\n" +
-     			"(assert (iff (zot-p0 2) (and (y 2) (or (x 2) (zot-p0 3)))))\n" +
-     			"(assert (iff (zot-p0 3) (and (y 3) (or (x 3) (zot-p0 4)))))\n" +
-     			"(assert (iff (zot-p0 4) (and (y 4) (or (x 4) (zot-p0 5)))))\n" +
-     			"(assert (iff (zot-p0 5) (and (y 5) (or (x 5) (zot-p0 6)))))\n" +
+     			"(assert (= (zot-p0 0) (and (y 0) (or (x 0) (zot-p0 1)))))\n" +
+     			"(assert (= (zot-p0 1) (and (y 1) (or (x 1) (zot-p0 2)))))\n" +
+     			"(assert (= (zot-p0 2) (and (y 2) (or (x 2) (zot-p0 3)))))\n" +
+     			"(assert (= (zot-p0 3) (and (y 3) (or (x 3) (zot-p0 4)))))\n" +
+     			"(assert (= (zot-p0 4) (and (y 4) (or (x 4) (zot-p0 5)))))\n" +
+     			"(assert (= (zot-p0 5) (and (y 5) (or (x 5) (zot-p0 6)))))\n" +
      			"(declare-fun i_eve_zot-p0 () Int)\n" +
-     			"(assert (-> loopex (-> (! (zot-p0 5)) (and (<= iLoop i_eve_zot-p0) " +
-     			"(<= i_eve_zot-p0 5) (! (zot-p0 i_eve_zot-p0))))))\n" +
-     			"(assert (and loopex (iff (x (- iLoop 1)) (x 5))))\n" +
-     			"(assert (and loopex (iff (y (- iLoop 1)) (y 5))))"
+     			"(assert (=> loopex (=> (not (zot-p0 5)) (and (<= iLoop i_eve_zot-p0) " +
+     			"(<= i_eve_zot-p0 5) (not (y i_eve_zot-p0))))))\n" +
+     			"(assert (and loopex (= (x (- iLoop 1)) (x 5))))\n" +
+     			"(assert (and loopex (= (y (- iLoop 1)) (y 5))))"
      			
      	assertExecution(input, expected, true)
     }
@@ -389,15 +376,15 @@ class LTLInterpreterTestCase {
      			"(declare-fun x (Int) Bool)\n" +
      			"(declare-fun y (Int) Bool)\n" +
      			supportFz("zot-p0", 1) + "\n" +
-     			"(assert (iff (zot-p0 0) (y 0)))\n" +
-     			"(assert (iff (zot-p0 1) (or (y 1) (and (x 1) (zot-p0 0)))))\n" +
-				"(assert (iff (zot-p0 2) (or (y 2) (and (x 2) (zot-p0 1)))))\n" +
-				"(assert (iff (zot-p0 3) (or (y 3) (and (x 3) (zot-p0 2)))))\n" +
-				"(assert (iff (zot-p0 4) (or (y 4) (and (x 4) (zot-p0 3)))))\n" +
-				"(assert (iff (zot-p0 5) (or (y 5) (and (x 5) (zot-p0 4)))))\n" +
-				"(assert (iff (zot-p0 6) (or (y 6) (and (x 6) (zot-p0 5)))))\n" +
-				"(assert (and loopex (iff (x (- iLoop 1)) (x 5))))\n" +
-     			"(assert (and loopex (iff (y (- iLoop 1)) (y 5))))"
+     			"(assert (= (zot-p0 0) (y 0)))\n" +
+     			"(assert (= (zot-p0 1) (or (y 1) (and (x 1) (zot-p0 0)))))\n" +
+				"(assert (= (zot-p0 2) (or (y 2) (and (x 2) (zot-p0 1)))))\n" +
+				"(assert (= (zot-p0 3) (or (y 3) (and (x 3) (zot-p0 2)))))\n" +
+				"(assert (= (zot-p0 4) (or (y 4) (and (x 4) (zot-p0 3)))))\n" +
+				"(assert (= (zot-p0 5) (or (y 5) (and (x 5) (zot-p0 4)))))\n" +
+				"(assert (= (zot-p0 6) (or (y 6) (and (x 6) (zot-p0 5)))))\n" +
+				"(assert (and loopex (= (x (- iLoop 1)) (x 5))))\n" +
+     			"(assert (and loopex (= (y (- iLoop 1)) (y 5))))"
 		
      	assertExecution(input, expected, true)
     }
@@ -416,15 +403,15 @@ class LTLInterpreterTestCase {
      			"(declare-fun x (Int) Bool)\n" +
      			"(declare-fun y (Int) Bool)\n" +
      			supportFz("zot-p0", 1) + "\n" +
-     			"(assert (iff (zot-p0 0) (y 0)))\n" +
-     			"(assert (iff (zot-p0 1) (and (y 1) (or (x 1) (zot-p0 0)))))\n" +
-				"(assert (iff (zot-p0 2) (and (y 2) (or (x 2) (zot-p0 1)))))\n" +
-				"(assert (iff (zot-p0 3) (and (y 3) (or (x 3) (zot-p0 2)))))\n" +
-				"(assert (iff (zot-p0 4) (and (y 4) (or (x 4) (zot-p0 3)))))\n" +
-				"(assert (iff (zot-p0 5) (and (y 5) (or (x 5) (zot-p0 4)))))\n" +
-				"(assert (iff (zot-p0 6) (and (y 6) (or (x 6) (zot-p0 5)))))\n" +
-				"(assert (and loopex (iff (x (- iLoop 1)) (x 5))))\n" +
-     			"(assert (and loopex (iff (y (- iLoop 1)) (y 5))))"
+     			"(assert (= (zot-p0 0) (y 0)))\n" +
+     			"(assert (= (zot-p0 1) (and (y 1) (or (x 1) (zot-p0 0)))))\n" +
+				"(assert (= (zot-p0 2) (and (y 2) (or (x 2) (zot-p0 1)))))\n" +
+				"(assert (= (zot-p0 3) (and (y 3) (or (x 3) (zot-p0 2)))))\n" +
+				"(assert (= (zot-p0 4) (and (y 4) (or (x 4) (zot-p0 3)))))\n" +
+				"(assert (= (zot-p0 5) (and (y 5) (or (x 5) (zot-p0 4)))))\n" +
+				"(assert (= (zot-p0 6) (and (y 6) (or (x 6) (zot-p0 5)))))\n" +
+				"(assert (and loopex (= (x (- iLoop 1)) (x 5))))\n" +
+     			"(assert (and loopex (= (y (- iLoop 1)) (y 5))))"
 
      	assertExecution(input, expected, true)
     }
@@ -442,13 +429,13 @@ class LTLInterpreterTestCase {
      			"(declare-fun x (Int) Bool)\n" +
      			supportFz("zot-p0", 1) + "\n" +
      			"(assert (zot-p0 0))\n" +
-     			"(assert (iff (zot-p0 1) (x 0)))\n" +
-     			"(assert (iff (zot-p0 2) (x 1)))\n" +
-     			"(assert (iff (zot-p0 3) (x 2)))\n" +
-     			"(assert (iff (zot-p0 4) (x 3)))\n" +
-     			"(assert (iff (zot-p0 5) (x 4)))\n" +
-     			"(assert (iff (zot-p0 6) (x 5)))\n" +
-     			"(assert (and loopex (iff (x (- iLoop 1)) (x 5))))"
+     			"(assert (= (zot-p0 1) (x 0)))\n" +
+     			"(assert (= (zot-p0 2) (x 1)))\n" +
+     			"(assert (= (zot-p0 3) (x 2)))\n" +
+     			"(assert (= (zot-p0 4) (x 3)))\n" +
+     			"(assert (= (zot-p0 5) (x 4)))\n" +
+     			"(assert (= (zot-p0 6) (x 5)))\n" +
+     			"(assert (and loopex (= (x (- iLoop 1)) (x 5))))"
      	
      	assertExecution(input, expected, true)
     }
