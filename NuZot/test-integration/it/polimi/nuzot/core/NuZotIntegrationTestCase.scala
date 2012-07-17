@@ -131,7 +131,9 @@ class NuZotIntegrationTestCase {
             case ex: IllegalStateException => {
                 // ok
             }
-        }
-        
+        }    
     }
+    
+    
+    
 }

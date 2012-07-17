@@ -1,12 +1,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; NextEventually
+;; YesterdayAndYesterday
 ;;
+;; UNSAT because in the past
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (set-info :domain Int)
 (set-info :k 10)
 (declare-tfun x () Bool)
-(check-sat)
-(get-model)
-(push)
-(assert (next (until true x)))
-(get-model)
+(assert (and x (release false (=> x (next (and (not x) (next (and (not x) (next x)))))))))

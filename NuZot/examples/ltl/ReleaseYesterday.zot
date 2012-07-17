@@ -1,12 +1,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; NextEventually
+;; ReleaseYesterday
 ;;
+;; This should be SAT
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (set-info :domain Int)
 (set-info :k 10)
 (declare-tfun x () Bool)
-(check-sat)
-(get-model)
-(push)
-(assert (next (until true x)))
-(get-model)
+(assert (release false (iff x (next (yesterday x)))))

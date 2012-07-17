@@ -1,0 +1,10 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Yesterday2
+;;
+;; UNSAT because in the past
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(set-info :domain Int)
+(set-info :k 10)
+(declare-tfun x () Bool)
+(declare-tfun y () Bool)
+(assert (until true (not (iff (not (until x y)) (release (not x) (not y))))))

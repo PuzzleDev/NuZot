@@ -23,7 +23,8 @@ import z3.scala.Z3Model
  */
 class NuZotExamplesTestCase {
 
-    def assertFileExecution(filename: String, expected: Boolean): Z3Model = {
+    def assertFileExecution(
+            filename: String, expected: Boolean): Z3Model = {
         val parser = new ShellParser()
         val inputScript = parser.loadFile(filename)
         
@@ -55,12 +56,49 @@ class NuZotExamplesTestCase {
     
     @Test
     def testAlways(): Unit = {
-        var model = assertFileExecution("examples/ltl/Always.zot", true);
+        var model = assertFileExecution(
+                "examples/ltl/Always.zot", true);
     }
     
     @Test
     def testContraddictAlways(): Unit = {
-        var model = assertFileExecution("examples/ltl/ContradictAlways.zot", false);
+        var model = assertFileExecution(
+                "examples/ltl/ContradictAlways.zot", false);
     }
     
+    @Test
+    def testUntilYesterday(): Unit = {
+        var model = assertFileExecution(
+                "examples/ltl/UntilYesterday.zot", false);
+    }
+    
+    @Test
+    def testReleaseYesterday(): Unit = {
+        var model = assertFileExecution(
+                "examples/ltl/ReleaseYesterday.zot", true);
+    }
+    
+    @Test
+    def testYesterday2(): Unit = {
+        var model = assertFileExecution(
+                "examples/ltl/Yesterday2.zot", true);
+    }
+    
+    @Test
+    def testUntilRelease(): Unit = {
+        var model = assertFileExecution(
+                "examples/ltl/UntilRelease.zot", false);
+    }
+    
+    @Test
+    def testYesterday2Next(): Unit = {
+        var model = assertFileExecution(
+                "examples/ltl/Yesterday2Next.zot", true);
+    }
+    
+    @Test
+    def testYesterdayAndYesterday(): Unit = {
+        var model = assertFileExecution(
+                "examples/ltl/YesterdayAndYesterday.zot", false);
+    }
 }
