@@ -128,11 +128,11 @@ sealed case class ITE(val ifa: Term, thena: Term, elsea: Term)
 
 
 sealed case class IFF(ifa: Term, thena: Term)
-		extends BinaryOperator("iff", ifa, thena) with BooleanOperator
+		extends BinaryOperator("=", ifa, thena) with BooleanOperator
 
 
 sealed case class IMP(val ifa: Term, val thena: Term)
-		extends BinaryOperator("->", ifa, thena) with BooleanOperator
+		extends BinaryOperator("=>", ifa, thena) with BooleanOperator
 
 
 sealed case class LE(left: Term, right: Term)
@@ -148,7 +148,7 @@ sealed case class Mul(override val values: Term*)
 
 
 sealed case class Not(override val value: Term)
-		extends UnaryOperator("!", value) with BooleanOperator
+		extends UnaryOperator("not", value) with BooleanOperator
 
 
 sealed case class Or(override val values: Term*)

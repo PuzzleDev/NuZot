@@ -1,0 +1,12 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ContradictAlways
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(set-info :domain Int)
+(set-info :k 10)
+(declare-tfun x () Bool)
+(check-sat)
+(get-model)
+(push)
+(assert (and (release false (until true x)) (release false (not x))))
+(check-sat)
+(get-model)

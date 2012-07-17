@@ -1,0 +1,12 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; NextUntil2
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(set-info :domain Int)
+(set-info :k 10)
+(declare-tfun x () Bool)
+(check-sat)
+(get-model)
+(push)
+(assert (next (until true (and x (next (until true x))))))
+(get-model)

@@ -1,0 +1,13 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; NextEventually
+;;
+;; S should be true at least once in the loop
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(set-info :domain Int)
+(set-info :k 10)
+(declare-tfun S () Bool)
+(check-sat)
+(get-model)
+(push)
+(assert (release false (until true S)))
+(get-model)

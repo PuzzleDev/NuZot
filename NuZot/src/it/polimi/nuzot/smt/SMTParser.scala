@@ -208,6 +208,9 @@ class SMTParser extends JavaTokenParsers {
         "(" ~ "->" ~> term ~ term <~ ")" ^^ {
             x => IMP(x._1, x._2)
         } |
+        "(" ~ "=>" ~> term ~ term <~ ")" ^^ {
+            x => IMP(x._1, x._2)
+        } |
         "(" ~ "<=" ~> term ~ term <~ ")" ^^ {
             x => LE(x._1, x._2)
         } |

@@ -1,0 +1,11 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Always
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(set-info :domain Int)
+(set-info :k 10)
+(declare-tfun S () Bool)
+(check-sat)
+(get-model)
+(push)
+(assert (release false S))
+(get-model)

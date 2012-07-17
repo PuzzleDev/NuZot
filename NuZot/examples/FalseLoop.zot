@@ -1,0 +1,12 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; FalseLoop
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(set-info :domain Int)
+(set-info :k 10)
+(declare-tfun x () Bool)
+(check-sat)
+(get-model)
+(push)
+(assert (and (until true (release false (not x))) (until true x)))
+(check-sat)
+(get-model)

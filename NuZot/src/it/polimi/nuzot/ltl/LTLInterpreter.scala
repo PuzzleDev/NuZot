@@ -225,9 +225,23 @@ class LTLInterpreter() extends DSLInterpreter {
      */
     override def generatePreconditions(): Script = {
 	    var script = new Script()
-	    return script ++ equalityDelegate.generatePreconditions(this) ++
+	    
+	    script = script ++ equalityDelegate.generatePreconditions(this) ++
 	    		arithmeticDelegate.generatePreconditions(this) ++
 	    		logicDelegate.generatePreconditions(this)
+	    
+	    domain match {
+	        case Sort.Real => {
+	            var terms: List[Term] = List()
+	            for (i <- 0 to _temporalExt + 1) {
+	               terms = EQ(Term.call(LTLInterpreter.iLoop), TermConst(const(i))) :: terms
+	            }
+	            script = script :+ CommandAssert(
+	                    Or(terms: _*))
+	        } case _ => {}
+	    }
+	    
+	    return script
 	}
     
     /**

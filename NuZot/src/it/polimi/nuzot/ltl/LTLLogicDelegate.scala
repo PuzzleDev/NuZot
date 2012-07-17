@@ -170,6 +170,16 @@ class LTLLogicDelegate extends LogicDelegate {
 		                Symbol(i_eve),
 		                List(),
 		                ltl.domain)
+		                
+		        val termSymbol = opY match {
+		            case k: TermQualIdentifierTerms => {
+		                k.qualIdentifier.identifier.symbol
+		            }
+		            case _ => {
+		                Symbol(ltl.generateTemporalSupportFzName(opY))
+		            }
+		        }         
+		                
 		        script = script :+ CommandAssert(
 		                IMP(
 		                        Term.call(LTLInterpreter.loopEx),
@@ -188,7 +198,7 @@ class LTLLogicDelegate extends LogicDelegate {
 		                			    				TermConst(ltl.const(ltl.temporalExt))
 		                			    		),
 		                			    		Not(
-		                			    		        Term.call(Symbol(supportFz),
+		                			    		        Term.call(termSymbol,
 		                			    		        		Term.call(i_eve))
 		                			    		)
 		                			    )
@@ -237,6 +247,16 @@ class LTLLogicDelegate extends LogicDelegate {
 		                Symbol(i_eve),
 		                List(),
 		                ltl.domain)
+		                
+		        val termSymbol = opY match {
+		            case k: TermQualIdentifierTerms => {
+		                k.qualIdentifier.identifier.symbol
+		            }
+		            case _ => {
+		                Symbol(ltl.generateTemporalSupportFzName(opY))
+		            }
+		        }        
+		                
 		        script = script :+ CommandAssert(
 		                IMP(
 		                        Term.call(LTLInterpreter.loopEx),
@@ -252,7 +272,7 @@ class LTLLogicDelegate extends LogicDelegate {
 		                			    				Term.call(i_eve),
 		                			    				TermConst(ltl.const(ltl.temporalExt))
 		                			    		),
-		                			    		Term.call(Symbol(supportFz),
+		                			    		Term.call(termSymbol,
 		                			        		Term.call(i_eve))
 		                			    )
 		                        )
