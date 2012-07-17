@@ -16,9 +16,9 @@ import it.polimi.nuzot.smt.grammar._
  */
 trait LogicDelegate extends DSLInterpreterDelegate[LTLInterpreter] {
     
-    def expandTemporalBooleanOperator(
+    def expandBooleanTemporalOperator(
             ltl: LTLInterpreter,
-            term: TemporalOperator, computed: Script): Script
+            term: BooleanTemporalOperator, computed: Script): Script
             
     def expandBooleanOperator(
             ltl: LTLInterpreter,

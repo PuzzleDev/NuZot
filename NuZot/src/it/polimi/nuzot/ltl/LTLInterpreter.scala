@@ -279,7 +279,7 @@ class LTLInterpreter() extends DSLInterpreter {
                     }
                 }
             }
-            case x: TemporalOperator => {
+            case x: BooleanTemporalOperator => {
                val supportFz = generateTemporalSupportFzName(x)
                return TermQualIdentifierTerms(
                         QualIdentifierIdentifier(IdentifierSymbol(Symbol(supportFz))),
@@ -557,8 +557,8 @@ class LTLInterpreter() extends DSLInterpreter {
                     }
                 }
             }
-            case x: TemporalOperator => {
-                return logicDelegate.expandTemporalBooleanOperator(this, x, computed)
+            case x: BooleanTemporalOperator => {
+                return logicDelegate.expandBooleanTemporalOperator(this, x, computed)
             }
             // Boolean operators
             case x: BooleanOperator => {

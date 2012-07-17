@@ -56,9 +56,9 @@ class LTLLogicDelegate extends LogicDelegate {
 	    return script
 	}
     
-    def expandTemporalBooleanOperator(
+    def expandBooleanTemporalOperator(
             ltl: LTLInterpreter,
-            term: TemporalOperator, computed: Script): Script = {
+            term: BooleanTemporalOperator, computed: Script): Script = {
         
         val supportFz = ltl.generateTemporalSupportFzName(term)
         var script = computed

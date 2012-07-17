@@ -21,7 +21,7 @@ import it.polimi.nuzot.smt.grammar.ArithmeticOperator
 /**
  * Temporal operators 
  */
-trait TemporalOperator extends BooleanOperator
+trait BooleanTemporalOperator extends BooleanOperator
 
 /**
  * Aritmetic temporal operators
@@ -35,7 +35,7 @@ trait ArithmeticTemporalOperator extends ArithmeticOperator
  */
 sealed case class Next(override val value: Term)
 		extends UnaryOperator("next", value)
-		with TemporalOperator
+		with BooleanTemporalOperator
 
 		
 /**
@@ -44,7 +44,7 @@ sealed case class Next(override val value: Term)
  */
 sealed case class Until(left: Term, right: Term)
 		extends BinaryOperator("until", left, right)
-		with TemporalOperator {
+		with BooleanTemporalOperator {
 
 }
 		
@@ -55,7 +55,7 @@ sealed case class Until(left: Term, right: Term)
  */
 sealed case class Release(left: Term, right: Term)
 		extends BinaryOperator("release", left, right)
-		with TemporalOperator {
+		with BooleanTemporalOperator {
 
 }
 
@@ -68,7 +68,7 @@ sealed case class Release(left: Term, right: Term)
  */
 sealed case class Yesterday(override val value: Term)
 		extends UnaryOperator("yesterday", value)
-		with TemporalOperator {
+		with BooleanTemporalOperator {
 
 }
 
@@ -81,7 +81,7 @@ sealed case class Yesterday(override val value: Term)
  */
 sealed case class Zeta(override val value: Term)
 		extends UnaryOperator("zeta", value)
-		with TemporalOperator {
+		with BooleanTemporalOperator {
 
 }
 
@@ -92,7 +92,7 @@ sealed case class Zeta(override val value: Term)
  */
 sealed case class Since(left: Term, right: Term)
 		extends BinaryOperator("since", left, right)
-		with TemporalOperator {
+		with BooleanTemporalOperator {
 
 }
 
@@ -103,7 +103,7 @@ sealed case class Since(left: Term, right: Term)
  */
 sealed case class Trigger(val value: Term, val condition: Term)
 		extends BinaryOperator("trigger", value, condition)
-		with TemporalOperator {
+		with BooleanTemporalOperator {
 
 }
 		

@@ -123,9 +123,9 @@ class FakeLogicDelegate extends LogicDelegate {
         return new Script()
     }
     
-    def expandTemporalBooleanOperator(
+    def expandBooleanTemporalOperator(
             ltl: LTLInterpreter,
-            term: TemporalOperator,
+            term: BooleanTemporalOperator,
             computed: Script): Script = {
         return computed
     }
