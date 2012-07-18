@@ -61,24 +61,32 @@ class LTLInterpreterTestCase {
     }
     
     @Test
-    def testDeneg_NotNot() = {
+    def testDenegNotNot() = {
         assertEquals(Term.True, interpreter.deneg(Not(Not(Term.True))))
     }
     
     @Test
-    def testDeneg_NotAnd() = {
+    def testDenegNotAnd() = {
         assertEquals(Or(Term.False, Term.False),
                 interpreter.deneg(Not(And(Term.True, Term.True)))
                 )
     }
     
     @Test
-    def testDeneg_NotOr() = {
+    def testDenegNotOr(): Unit = {
         assertEquals(And(Term.False, Term.False),
                 interpreter.deneg(Not(Or(Term.True, Term.True)))
                 )
     }
     
+    @Test
+    def testAssertFun(): Unit = {
+        val x = "x"
+        val script = Script(List(CommandAssert(Term.call(x))))
+        val result = interpreter.visitCommand(
+                CommandAssert(Term.call(x)), new Script())
+        assertEquals(script, result)
+    }
     
     /**
      * Assert the correct expansion of LTL function

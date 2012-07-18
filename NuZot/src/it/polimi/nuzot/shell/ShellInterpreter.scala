@@ -48,9 +48,9 @@ class ShellInterpreter extends DSLInterpreter {
             case x: CommandSave => {
                 val filename = x.filename.substring(
                         1,  x.filename.length() - 1)
-                // TODO(msama): remove the save command
+                // Remove the save command
                 // which is the last added
-                innerSave(filename, original ++ computed)
+                innerSave(filename, original.previous() ++ computed)
                 // Filter the save command
                 return computed
             }
@@ -72,7 +72,7 @@ class ShellInterpreter extends DSLInterpreter {
     }
     
     def load(name: String): Unit = {
-    	doVisit(Script(CommandLoad("\"" + name + "\"") :: List()))
+    	doVisit(Script(List(CommandLoad("\"" + name + "\""))))
     }
     
     /**
@@ -91,7 +91,7 @@ class ShellInterpreter extends DSLInterpreter {
     }
     
     def save(name: String): Unit = {
-    	doVisit(Script(CommandSave("\"" + name + "\"") :: List()))
+    	doVisit(Script(List(CommandSave("\"" + name + "\""))))
     }
 
     def innerSave(filename: String, script: Script): Unit = {

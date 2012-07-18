@@ -151,7 +151,7 @@ trait DSLInterpreter {
                 if (_initializing == false) {
                     throw new IllegalStateException(
                             "Initialization commands can only be interpreted " +
-                            "at the beginnin of the script")
+                            "at the beginning of the script")
                 }
                 initCommand match {
 	                case x: InitCommandSetLogic => {
@@ -210,9 +210,19 @@ trait DSLInterpreter {
         source.commands match {
             case Nil => return computed
             case head::tail => {
-                append(head)
-                return visitScript(Script(tail),
-                        innerVisitCommand(head, computed))
+                try {
+                    append(head)
+                    val script = visitScript(Script(tail),
+                    		innerVisitCommand(head, computed))
+                    
+                    return script
+                } catch {
+                    case ex: RuntimeException => {
+                        original = original.previous()
+                        println("An error has occurred: "+ ex.getMessage())
+                        return computed
+                    }
+                }
             }
         }
     }
@@ -222,7 +232,6 @@ trait DSLInterpreter {
      * forwards the modified DOM to the next visitor. 
      */
     final def doVisit(source: Script): Script = {
-        //append(source)
 		val computedScript = visitScript(source, new Script())
 		next match {
 		    case x: DSLInterpreter => {

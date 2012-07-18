@@ -527,23 +527,25 @@ class LTLInterpreter() extends DSLInterpreter {
                     case Some(s) => {
                         s match {
                             case Sort.Bool => {
-                                return computed :+ CommandAssert(
-	                                And(
-	                            		Term.call(LTLInterpreter.loopEx),
-	                    				IFF(
-	                						Term.call(
-	            						        fzName,
-	            						        (Seq(Sub(
-	            						                Term.call(LTLInterpreter.iLoop),
-	            						                TermConst(const(1))
-	            						        ))++x.terms): _*),
-	                						Term.call(
-	            						        fzName,
-	            						        (Seq(TermConst(const(temporalExt))) ++ x.terms): _*
-	            						        )
-	                    				)
-	                                )
-	                            )
+                                return computed :+ 
+	                                CommandAssert(
+		                                And(
+		                            		Term.call(LTLInterpreter.loopEx),
+		                    				IFF(
+		                						Term.call(
+		            						        fzName,
+		            						        (Seq(Sub(
+		            						                Term.call(LTLInterpreter.iLoop),
+		            						                TermConst(const(1))
+		            						        ))++x.terms): _*
+		            						        ),
+		                						Term.call(
+		            						        fzName,
+		            						        (Seq(TermConst(const(temporalExt))) ++ x.terms): _*
+		            						        )
+		                    				)
+		                                )
+		                            )
                             }
                             case Sort.Int | Sort.Real => {
                                 return computed
@@ -577,6 +579,7 @@ class LTLInterpreter() extends DSLInterpreter {
                         
                     }
                     case None => {
+                        // Non temporal function
                         return computed
                     }
                 }
@@ -584,12 +587,9 @@ class LTLInterpreter() extends DSLInterpreter {
             case x: BooleanTemporalOperator => {
                 return logicDelegate.expandBooleanTemporalOperator(this, x, computed)
             }
-            // Boolean operators
             case x: BooleanOperator => {
                 return logicDelegate.expandBooleanOperator(this, x, computed)
             }
-            
-            // Aritmetic operator
             case x: ArithmeticTemporalOperator => {
                  return arithmeticDelegate.expandArithmeticTemporalOperator(
                          this, x, computed)
@@ -634,6 +634,22 @@ class LTLInterpreter() extends DSLInterpreter {
             }
             case x: CommandAssert => {
                 // Converts temporal asserts in SMT-lib style asserts
+                x.term match {
+                    case term: TermQualIdentifierTerms => {
+                        val fzName = term.qualIdentifier.identifier.symbol
+                        val returnType = temporalFunctions.get(fzName)
+                        // Skip the expansion for
+                        // (assert x) where x is a Bool variable
+                        returnType match {
+                            case Some(k) => {}
+                            case _ => {
+                                return computed :+ command
+                            }
+                            
+                        }
+                    }
+                    case _ => {}
+                }
                 return doExpandLTL(deneg(x.term), computed)
             }
             case x: CommandTemporalAssert => {

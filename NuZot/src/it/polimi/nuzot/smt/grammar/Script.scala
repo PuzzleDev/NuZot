@@ -40,4 +40,8 @@ case class Script(val commands: List[Command]) extends Statement {
             }
         }
     }
+    
+    def previous(): Script = {
+        return Script(commands.dropRight(1))
+    }
 }
