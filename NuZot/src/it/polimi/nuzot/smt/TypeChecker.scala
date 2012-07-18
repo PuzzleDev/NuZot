@@ -270,6 +270,13 @@ class TypeChecker extends DSLInterpreter {
                 }
             }
             case x: CommandDeclareFun => 
+                // Check the return type of declared functions
+                // The return type should be the same as the domain
+                if (x.returnType != domain) {
+                    throw new IllegalStateException(
+                        	"Wrong return type found: " + x.returnType + 
+                        	" expected:" + domain)
+                }
             	visitCommandDeclareFun(x.name, x.args, x.returnType)
             case x: CommandDefineFun => {
             	// TODO(m.sama): not implemented
