@@ -1,8 +1,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Yesterday2Next
+;; ZetaYesterday
 ;;
-;; UNSAT because in the past
+;; UNSAT
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (set-info :domain Int)
 (set-info :k 10)
-(assert (yesterday (yesterday (next true))))
+(assert (zeta (yesterday true)))

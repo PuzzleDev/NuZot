@@ -228,6 +228,7 @@ class LTLInterpreterTestCase {
      			"(assert (= (zot-p0 4) (x 3)))\n" +
      			"(assert (= (zot-p0 5) (x 4)))\n" +
      			"(assert (= (zot-p0 6) (x 5)))\n" +
+     			"(assert (= (zot-p0 0) false))\n" +
      			"(assert (and loopex (= (x (- iLoop 1)) (x 5))))"
      			
      	assertExecution(input, expected, true)
@@ -443,6 +444,7 @@ class LTLInterpreterTestCase {
      			"(assert (= (zot-p0 4) (x 3)))\n" +
      			"(assert (= (zot-p0 5) (x 4)))\n" +
      			"(assert (= (zot-p0 6) (x 5)))\n" +
+     			"(assert (= (zot-p0 0) true))\n" +
      			"(assert (and loopex (= (x (- iLoop 1)) (x 5))))"
      	
      	assertExecution(input, expected, true)

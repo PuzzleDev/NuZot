@@ -1,9 +1,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; UntilYesterday
 ;;
-;; This should be 
+;; This should be UNSAT
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (set-info :domain Int)
 (set-info :k 10)
 (declare-tfun x () Bool)
-(assert (until true (not (iff x (next (yesterday x)))))
+(assert (until true (not (iff x (next (yesterday x))))))

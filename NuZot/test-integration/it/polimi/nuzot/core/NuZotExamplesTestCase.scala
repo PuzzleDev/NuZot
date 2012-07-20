@@ -61,9 +61,33 @@ class NuZotExamplesTestCase {
     }
     
     @Test
+    def testAndReleaseImp(): Unit = {
+        var model = assertFileExecution(
+                "examples/ltl/AndReleaseImp.zot", true);
+    }
+    
+    @Test
     def testContraddictAlways(): Unit = {
         var model = assertFileExecution(
                 "examples/ltl/ContradictAlways.zot", false);
+    }
+    
+    @Test
+    def testGreaterThan(): Unit = {
+        var model = assertFileExecution(
+                "examples/ltl/GreaterThan.zot", true);
+    }
+    
+    @Test
+    def testFalseLoop(): Unit = {
+        var model = assertFileExecution(
+                "examples/ltl/FalseLoop.zot", true);
+    }
+    
+    @Test
+    def testNextEventually(): Unit = {
+        var model = assertFileExecution(
+                "examples/ltl/NextEventually.zot", true);
     }
     
     @Test
@@ -79,21 +103,21 @@ class NuZotExamplesTestCase {
     }
     
     @Test
-    def testYesterday2(): Unit = {
-        var model = assertFileExecution(
-                "examples/ltl/Yesterday2.zot", true);
-    }
-    
-    @Test
     def testUntilRelease(): Unit = {
         var model = assertFileExecution(
                 "examples/ltl/UntilRelease.zot", false);
     }
     
     @Test
+    def testYesterday2(): Unit = {
+        var model = assertFileExecution(
+                "examples/ltl/Yesterday2.zot", false);
+    }
+    
+    @Test
     def testYesterday2Next(): Unit = {
         var model = assertFileExecution(
-                "examples/ltl/Yesterday2Next.zot", true);
+                "examples/ltl/Yesterday2Next.zot", false);
     }
     
     @Test
@@ -103,8 +127,8 @@ class NuZotExamplesTestCase {
     }
     
     @Test
-    def testAndReleaseImp(): Unit = {
+    def testZetaYesterday(): Unit = {
         var model = assertFileExecution(
-                "examples/ltl/AndReleaseImp.zot", true);
+                "examples/ltl/ZetaYesterday.zot", false);
     }
 }
