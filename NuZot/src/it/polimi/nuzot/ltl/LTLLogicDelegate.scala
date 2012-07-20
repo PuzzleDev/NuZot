@@ -101,6 +101,13 @@ class LTLLogicDelegate extends LogicDelegate {
                         		)	
                     		)
                 }
+                // (assert (= (f 0) false))
+                script = script :+ CommandAssert(
+                        EQ(
+                            Term.call(Symbol(supportFz), TermConst(ltl.const(0))),
+                        	Term.const(false)
+                    		)	
+                		)
                 return ltl.expandSubformula(op, script)  
             }
             case Zeta(op) => {
@@ -115,6 +122,13 @@ class LTLLogicDelegate extends LogicDelegate {
                         		)	
                     		)
                 }
+                // (assert (= (f 0) true))
+                script = script :+ CommandAssert(
+                        EQ(
+                            Term.call(Symbol(supportFz), TermConst(ltl.const(0))),
+                        	Term.const(true)
+                    		)	
+                		)
                 return ltl.expandSubformula(op, script) 
             }
             case Trigger(opX, opY) => {		                
