@@ -220,6 +220,7 @@ trait DSLInterpreter {
                     case ex: RuntimeException => {
                         original = original.previous()
                         println("An error has occurred: "+ ex.getMessage())
+                        ex.printStackTrace()
                         return computed
                     }
                 }

@@ -272,7 +272,7 @@ class TypeChecker extends DSLInterpreter {
             case x: CommandDeclareFun => 
                 // Check the return type of declared functions
                 // The return type should be the same as the domain
-                if (x.returnType != domain) {
+                if (x.returnType != domain && x.returnType != Sort.Bool) {
                     throw new IllegalStateException(
                         	"Wrong return type found: " + x.returnType + 
                         	" expected:" + domain)
