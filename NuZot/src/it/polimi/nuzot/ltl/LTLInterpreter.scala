@@ -778,6 +778,13 @@ class LTLInterpreter() extends DSLInterpreter {
             }
             // Only boolean equalities have to be processed
             case x: EQ => {
+                /* XXX(msama): FindBug reports a problem here.
+                 * Probably matching with Sort.Bool does not works.
+                 * This should be rewritten/removed.
+                 * 
+                 * NB. EQ should only be used for numbers and not 
+                 * for booleans. Boolean equalities should be done with IMP.
+                 */
                 x.left match {
                     case Sort.Bool => {
                         // Boolean equality
