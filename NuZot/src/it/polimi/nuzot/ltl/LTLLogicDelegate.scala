@@ -348,6 +348,9 @@ class LTLLogicDelegate extends LogicDelegate {
                         		)	
                     		)
                 }
+                script = ltl.expandSubformula(op.left, script)
+                script = ltl.expandSubformula(op.right, script)
+
                 return script
             }
             case op: ITE => {
@@ -360,6 +363,9 @@ class LTLLogicDelegate extends LogicDelegate {
                         		)	
                     		)
                 }
+                script = ltl.expandSubformula(op.ifa, script)
+                script = ltl.expandSubformula(op.thena, script)
+                script = ltl.expandSubformula(op.elsea, script)
                 return script
             }
             case op: IFF => {
@@ -371,6 +377,8 @@ class LTLLogicDelegate extends LogicDelegate {
                         		)	
                     		)
                 }
+                script = ltl.expandSubformula(op.ifa, script)
+                script = ltl.expandSubformula(op.thena, script)
                 return script
             }
             case op: IMP => {
@@ -382,6 +390,8 @@ class LTLLogicDelegate extends LogicDelegate {
                         		)	
                     		)
                 }
+                script = ltl.expandSubformula(op.ifa, script)
+                script = ltl.expandSubformula(op.thena, script)
                 return script
             }
             
