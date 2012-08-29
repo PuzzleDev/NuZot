@@ -241,21 +241,22 @@ class LTLInterpreterTestCase {
             	"(set-info :k 5)\n" +
             	"(declare-tfun x () Bool)\n" +
             	"(declare-tfun y () Bool)\n" +
-        		"(assert (-> x y))"
+        		"(assert (=> x y))"
 
         val expected = 
             	"(set-info :k 5)\n" +
             	preconditions(interpreter) + "\n" +
      			"(declare-fun x (Int) Bool)\n" +
+     			"(declare-fun y (Int) Bool)\n" +
      			supportFz("zot-p0", 1) + "\n" +
-     			"(assert (= (zot-p0 1) (x 0)))\n" +
-     			"(assert (= (zot-p0 2) (x 1)))\n" +
-     			"(assert (= (zot-p0 3) (x 2)))\n" +
-     			"(assert (= (zot-p0 4) (x 3)))\n" +
-     			"(assert (= (zot-p0 5) (x 4)))\n" +
-     			"(assert (= (zot-p0 6) (x 5)))\n" +
-     			"(assert (= (zot-p0 0) false))\n" +
-     			"(assert (and loopex (= (x (- iLoop 1)) (x 5))))"
+     			"(assert (=> (x 0) (y 0)))\n" +
+     			"(assert (=> (x 1) (y 1)))\n" +
+     			"(assert (=> (x 2) (y 2)))\n" +
+     			"(assert (=> (x 3) (y 3)))\n" +
+     			"(assert (=> (x 4) (y 4)))\n" +
+     			"(assert (=> (x 5) (y 5)))\n" +
+     			"(assert (and loopex (= (x (- iLoop 1)) (x 5))))\n" +
+     			"(assert (and loopex (= (y (- iLoop 1)) (y 5))))"
      			
      	assertExecution(input, expected, true)
     }
