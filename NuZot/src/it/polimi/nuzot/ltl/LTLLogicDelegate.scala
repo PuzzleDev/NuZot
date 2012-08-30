@@ -342,6 +342,14 @@ class LTLLogicDelegate extends LogicDelegate {
             case op: Rem => {
                 for (i <- 0 until ltl.temporalExt + 1) {
                     script = script :+ CommandAssert(
+		                EQ(
+					      Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+					      ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
+					    )
+                    )
+                }
+                for (i <- 0 until ltl.temporalExt + 1) {
+                    script = script :+ CommandAssert(
                             Rem(
                                 ltl.expandTemporalFunctionsAtTime(op.left, ltl.const(i)),
                             	ltl.expandTemporalFunctionsAtTime(op.right, ltl.const(i))
@@ -354,6 +362,14 @@ class LTLLogicDelegate extends LogicDelegate {
                 return script
             }
             case op: ITE => {
+                for (i <- 0 until ltl.temporalExt + 1) {
+                    script = script :+ CommandAssert(
+		                EQ(
+					      Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+					      ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
+					    )
+                    )
+                }
                 for (i <- 0 until ltl.temporalExt + 1) {
                     script = script :+ CommandAssert(
                             ITE(
@@ -371,6 +387,14 @@ class LTLLogicDelegate extends LogicDelegate {
             case op: IFF => {
                 for (i <- 0 until ltl.temporalExt + 1) {
                     script = script :+ CommandAssert(
+		                EQ(
+					      Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+					      ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
+					    )
+                    )
+                }
+                for (i <- 0 until ltl.temporalExt + 1) {
+                    script = script :+ CommandAssert(
                             IFF(
                                 ltl.expandTemporalFunctionsAtTime(op.ifa, ltl.const(i)),
                             	ltl.expandTemporalFunctionsAtTime(op.thena, ltl.const(i))
@@ -382,6 +406,14 @@ class LTLLogicDelegate extends LogicDelegate {
                 return script
             }
             case op: IMP => {
+                for (i <- 0 until ltl.temporalExt + 1) {
+                    script = script :+ CommandAssert(
+		                EQ(
+					      Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+					      ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
+					    )
+                    )
+                }
                 for (i <- 0 until ltl.temporalExt + 1) {
                     script = script :+ CommandAssert(
                             IMP(

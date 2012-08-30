@@ -249,6 +249,12 @@ class LTLInterpreterTestCase {
      			"(declare-fun x (Int) Bool)\n" +
      			"(declare-fun y (Int) Bool)\n" +
      			supportFz("zot-p0", 1) + "\n" +
+     			"(assert (= (zot-p0 0) (=> (x 0) (y 0))))\n" +
+				"(assert (= (zot-p0 1) (=> (x 1) (y 1))))\n" +
+				"(assert (= (zot-p0 2) (=> (x 2) (y 2))))\n" +
+				"(assert (= (zot-p0 3) (=> (x 3) (y 3))))\n" +
+				"(assert (= (zot-p0 4) (=> (x 4) (y 4))))\n" +
+				"(assert (= (zot-p0 5) (=> (x 5) (y 5))))\n" +
      			"(assert (=> (x 0) (y 0)))\n" +
      			"(assert (=> (x 1) (y 1)))\n" +
      			"(assert (=> (x 2) (y 2)))\n" +
