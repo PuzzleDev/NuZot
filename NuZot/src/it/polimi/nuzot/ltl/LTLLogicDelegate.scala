@@ -340,7 +340,7 @@ class LTLLogicDelegate extends LogicDelegate {
                 return ltl.expandSubformula(op, script)  
             }
             case op: Rem => {
-                for (i <- 0 until ltl.temporalExt + 1) {
+                for (i <- 0 until ltl.temporalExt + 2) {
                     script = script :+ CommandAssert(
 		                EQ(
 					      Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
@@ -348,21 +348,14 @@ class LTLLogicDelegate extends LogicDelegate {
 					    )
                     )
                 }
-                for (i <- 0 until ltl.temporalExt + 1) {
-                    script = script :+ CommandAssert(
-                            Rem(
-                                ltl.expandTemporalFunctionsAtTime(op.left, ltl.const(i)),
-                            	ltl.expandTemporalFunctionsAtTime(op.right, ltl.const(i))
-                        		)	
-                    		)
-                }
+                
                 script = ltl.expandSubformula(op.left, script)
                 script = ltl.expandSubformula(op.right, script)
 
                 return script
             }
             case op: ITE => {
-                for (i <- 0 until ltl.temporalExt + 1) {
+                for (i <- 0 until ltl.temporalExt + 2) {
                     script = script :+ CommandAssert(
 		                EQ(
 					      Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
@@ -370,22 +363,14 @@ class LTLLogicDelegate extends LogicDelegate {
 					    )
                     )
                 }
-                for (i <- 0 until ltl.temporalExt + 1) {
-                    script = script :+ CommandAssert(
-                            ITE(
-                                ltl.expandTemporalFunctionsAtTime(op.ifa, ltl.const(i)),
-                            	ltl.expandTemporalFunctionsAtTime(op.thena, ltl.const(i)),
-                            	ltl.expandTemporalFunctionsAtTime(op.elsea, ltl.const(i))
-                        		)	
-                    		)
-                }
+                
                 script = ltl.expandSubformula(op.ifa, script)
                 script = ltl.expandSubformula(op.thena, script)
                 script = ltl.expandSubformula(op.elsea, script)
                 return script
             }
             case op: IFF => {
-                for (i <- 0 until ltl.temporalExt + 1) {
+                for (i <- 0 until ltl.temporalExt + 2) {
                     script = script :+ CommandAssert(
 		                EQ(
 					      Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
@@ -393,20 +378,13 @@ class LTLLogicDelegate extends LogicDelegate {
 					    )
                     )
                 }
-                for (i <- 0 until ltl.temporalExt + 1) {
-                    script = script :+ CommandAssert(
-                            IFF(
-                                ltl.expandTemporalFunctionsAtTime(op.ifa, ltl.const(i)),
-                            	ltl.expandTemporalFunctionsAtTime(op.thena, ltl.const(i))
-                        		)	
-                    		)
-                }
+                
                 script = ltl.expandSubformula(op.ifa, script)
                 script = ltl.expandSubformula(op.thena, script)
                 return script
             }
             case op: IMP => {
-                for (i <- 0 until ltl.temporalExt + 1) {
+                for (i <- 0 until ltl.temporalExt + 2) {
                     script = script :+ CommandAssert(
 		                EQ(
 					      Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
@@ -414,14 +392,7 @@ class LTLLogicDelegate extends LogicDelegate {
 					    )
                     )
                 }
-                for (i <- 0 until ltl.temporalExt + 1) {
-                    script = script :+ CommandAssert(
-                            IMP(
-                                ltl.expandTemporalFunctionsAtTime(op.ifa, ltl.const(i)),
-                            	ltl.expandTemporalFunctionsAtTime(op.thena, ltl.const(i))
-                        		)	
-                    		)
-                }
+                
                 script = ltl.expandSubformula(op.ifa, script)
                 script = ltl.expandSubformula(op.thena, script)
                 return script
