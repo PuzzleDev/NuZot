@@ -61,7 +61,7 @@ class LTLInterpreter() extends DSLInterpreter {
         	new DefaultEqualityDelegate()
     
     // Declared temporal functions.
-    var temporalFunctions = new Scope[Symbol, Sort]()    
+    var temporalFunctions = new Scope[Symbol, Sort]()
     
     // The temporal extension K
     var _temporalExt: Int = -1
@@ -200,8 +200,6 @@ class LTLInterpreter() extends DSLInterpreter {
         }
     }
     
-    
-    
     def loadLogic(logic: Symbol) = {
         val className = logic.toString()
         try {
@@ -262,7 +260,20 @@ class LTLInterpreter() extends DSLInterpreter {
      */
     def assertDiscreteTemporalValue(symbol: Symbol): Script = {
         domain match {
-	        case Sort.Real => {
+            //MR: add also the case of Int sort
+            case Sort.Int => {
+                var terms: List[Term] = List()
+                for (i <- 0 to _temporalExt + 1) {
+                   terms = EQ(Term.call(symbol),
+                             TermConst(const(i))) :: terms
+                }
+                return Script(List(
+                        CommandAssert(
+                            And(
+                                LE(TermConst(const(0)),Term.call(symbol)),
+                                LE(Term.call(symbol),TermConst(const(_temporalExt+1)))
+                                ))))
+            } case Sort.Real => {
 	            var terms: List[Term] = List()
 	            for (i <- 0 to _temporalExt + 1) {
 	               terms = EQ(Term.call(symbol),
@@ -398,6 +409,19 @@ class LTLInterpreter() extends DSLInterpreter {
         return fzName
     }
     
+    var alreadyExpanded = new Scope[String, String]
+    def shouldExpandSupportFx(fzName: String): Boolean = {
+         alreadyExpanded.get(fzName) match {
+            case Some(name) => {
+                return false
+            }
+            case None => {
+                alreadyExpanded.set(fzName, fzName)
+                return true
+            }
+        }
+    }
+    
     def generateAllTemporalSupportFz(
             sourceFz: Term, computed: Script, 
             satisfy: Boolean, satisfyAt: SpecConstant): Script = {
@@ -507,6 +531,51 @@ class LTLInterpreter() extends DSLInterpreter {
             }
         }
     }
+
+    //MR: this function declares support predicates such as zot-pX,
+    //    and introduces LastStateConstraints on them
+    //    it does so only for the passed predicate, not for all of its subformulae
+    def addSupportFzConstraints(supportFz: String, computed: Script): Script = {
+                
+        // Adds (declare-fun zot-pX (Int) Bool)
+        def declareSupportFz(supportFz: String): Command = {
+            return CommandDeclareFun(
+                    Symbol(supportFz),
+                    List(domain),
+                    Sort.Bool)
+        }
+        
+        //MR: Create LastStateConstraints in the case the loop exists
+        def declareLastStateConstraintsLoopEx(supportFz: String) : Command ={
+            // (assert (-> loopex (iff (zot-f0 6) (zot-f0 iLoop)))
+            return CommandAssert(
+                        IMP(
+                            Term.call(LTLInterpreter.loopEx),
+                            IFF(
+                                Term.call(Symbol(supportFz), TermConst(const(temporalExt + 1))),
+                                Term.call(Symbol(supportFz), Term.call(LTLInterpreter.iLoop))
+                            )
+                        )
+                    )
+        }
+
+        //MR: Create LastStateConstraints in the case the loop does not exist
+        def declareLastStateConstraintsNotLoopEx(supportFz: String) : Command ={
+        // (assert (-> (! loopex) (! (zot-f0 6)))
+            return CommandAssert(
+                        IMP(
+                            Not(Term.call(LTLInterpreter.loopEx)),
+                            Not(Term.call(Symbol(supportFz), TermConst(const(temporalExt + 1))))
+                        )
+                    )          
+        }
+         
+        return computed :+
+                declareSupportFz(supportFz) :+
+                declareLastStateConstraintsLoopEx(supportFz) :+
+                declareLastStateConstraintsNotLoopEx(supportFz: String)                
+    }
+    
     
     /**
      * Expand the subformula at a given time.
@@ -520,69 +589,109 @@ class LTLInterpreter() extends DSLInterpreter {
             }
             // Atomic and parametric functions
             case x: TermQualIdentifierTerms => {
-                // TODO(m.sama): avoid multiple atoms constraints
-                val fzName = x.qualIdentifier.identifier.symbol
-                val returnType = temporalFunctions.get(fzName)
-                returnType match {
-                    case Some(s) => {
-                        s match {
-                            case Sort.Bool => {
-                                return computed :+ 
-	                                CommandAssert(
-		                                And(
-		                            		Term.call(LTLInterpreter.loopEx),
-		                    				IFF(
-		                						Term.call(
-		            						        fzName,
-		            						        (Seq(Sub(
-		            						                Term.call(LTLInterpreter.iLoop),
-		            						                TermConst(const(1))
-		            						        ))++x.terms): _*
-		            						        ),
-		                						Term.call(
-		            						        fzName,
-		            						        (Seq(TermConst(const(temporalExt))) ++ x.terms): _*
-		            						        )
-		                    				)
-		                                )
-		                            )
-                            }
-                            case Sort.Int | Sort.Real => {
-                                return computed
-                                // TODO(m.sama): add a flag
-                                // The arithmetic part is not periodic unless manually requested.
-                                /*
-                                return computed :+ CommandAssert(
-	                                And(
-	                            		Term.call(LTLInterpreter.loopEx),
-	                    				EQ(
-	                						Term.call(
-	            						        fzName,
-	            						        (Seq(Sub(
-	            						                Term.call(LTLInterpreter.iLoop),
-	            						                Term.const(1)
-	            						        ))++x.terms): _*),
-	                						Term.call(
-	            						        fzName,
-	            						        (Seq(Term.const(temporalExt))++x.terms): _*
-	            						        )
-	                    				)
-	                                )
-	                            )*/
-                            }
-                            case _ => {
-                                throw new IllegalArgumentException(
-                                        "Invalid sort: " + s)
-                            }
-                        }
+                //MR: do not add LoopConstraints and LastStateConstraints if already added
+                if(shouldExpandSupportFx(x.toString())){
+                  
+                  // TODO(m.sama): avoid multiple atoms constraints
+                  val fzName = x.qualIdentifier.identifier.symbol
+                  val returnType = temporalFunctions.get(fzName)
+                  returnType match {
+                      case Some(s) => {
+                          s match {
+                              case Sort.Bool => {
+                                  //MR: if the term is actually a predicate, we introduce LastStateConstraints
+                                  //    and LoopConstraints. The contraints are added only if the term is used
+                                  //    in the specification, otherwise it is never added
+                                  return computed :+ 
+                                      //MR: we add the LoopConstraints
+	                                  CommandAssert(
+	                                      //MR: modified, And changed in ->
+//		                                  And(
+                                          IMP(
+		                              		Term.call(LTLInterpreter.loopEx),
+		                      				IFF(
+		                   						Term.call(
+		              						        fzName,
+		              						        (Seq(Sub(
+		              						                Term.call(LTLInterpreter.iLoop),
+		              						                TermConst(const(1))
+		              						        ))++x.terms): _*
+		              						        ),
+		                  						Term.call(
+		              						        fzName,
+		              						        (Seq(TermConst(const(temporalExt))) ++ x.terms): _*
+		              						        )
+		                      				)
+		                                  )
+		                              ) :+
+		                              //MR: we also add the LastStateConstraints
+                                      CommandAssert(
+                                          IMP(
+                                              Term.call(LTLInterpreter.loopEx),
+                                              IFF(
+                                                  Term.call(
+                                                      fzName,
+                                                      (Seq(Term.call(LTLInterpreter.iLoop))++x.terms): _*
+                                                      ),
+                                                  Term.call(
+                                                      fzName,
+                                                      (Seq(TermConst(const(temporalExt+1))) ++ x.terms): _*
+                                                      )
+                                              )
+                                          )
+                                      ) :+
+                                      //MR: also in the case in which the loop does not exist
+                                      CommandAssert(
+                                          IMP(
+                                              Not(Term.call(LTLInterpreter.loopEx)),
+                                              Not(Term.call(
+                                                      fzName,
+                                                      (Seq(TermConst(const(temporalExt+1))) ++ x.terms): _*
+                                                      )
+                                              )
+                                          )
+                                      )
+                              }
+                              case Sort.Int | Sort.Real => {
+                                  return computed
+                                  // TODO(m.sama): add a flag
+                                  // The arithmetic part is not periodic unless manually requested.
+                                  /*
+                                  return computed :+ CommandAssert(
+	                                  And(
+	                              		Term.call(LTLInterpreter.loopEx),
+	                      				EQ(
+	                  						Term.call(
+	              						        fzName,
+	              						        (Seq(Sub(
+	              						                Term.call(LTLInterpreter.iLoop),
+	              						                Term.const(1)
+	              						        ))++x.terms): _*),
+	                  						Term.call(
+	              						        fzName,
+	              						        (Seq(Term.const(temporalExt))++x.terms): _*
+	              						        )
+	                      				)
+	                                  )
+	                              )*/
+                              }
+                              case _ => {
+                                  throw new IllegalArgumentException(
+                                          "Invalid sort: " + s)
+                              }
+                          }
                         
                         
-                    }
-                    case None => {
-                        // Non temporal function
-                        return computed
-                    }
+                      }
+                      case None => {
+                          // Non temporal function
+                          return computed
+                      }
+                  }
+                } else {
+                  return computed
                 }
+                
             }
             case x: BooleanTemporalOperator => {
                 return logicDelegate.expandBooleanTemporalOperator(this, x, computed)
@@ -610,9 +719,18 @@ class LTLInterpreter() extends DSLInterpreter {
     }
     
     def doExpandLTL(sourceFz: Term, computed: Script): Script = {
-        val script = generateAllTemporalSupportFz(
-                sourceFz, computed, true, const(1))
-    	return expandSubformula(sourceFz, script)
+      //MR: This has been changed to reduce the number of constraints asserted
+      //    In particular, we avoid using generateAllTemporalSupportFz to set the value
+      //    of the root formula at 1, and instead use the CommandAssert
+      //    this works in combination with the modification to expandBooleanOperator,
+      //    which now does not introduce additional predicates for Boolean operators, as they
+      //    are available natively in the SMT solver
+//        val script = generateAllTemporalSupportFz(
+//                sourceFz, computed, true, const(1))                
+//        return expandSubformula(sourceFz, script)
+        //MR: we embed the function declaration of the support predicates in the expandSubformula function 
+//        val script = generateAllTemporalSupportFz(sourceFz, computed, false, const(1))                
+    	return expandSubformula(sourceFz, computed) :+ CommandAssert(expandTemporalFunctionsAtTime(sourceFz, const(1)))
     }
     
     override def visitCommand(command: Command, computed: Script): Script = {
@@ -650,7 +768,10 @@ class LTLInterpreter() extends DSLInterpreter {
                     }
                     case _ => {}
                 }
-                return doExpandLTL(deneg(x.term), computed)
+                // MR: the deneg is not really necessary, though it might be more efficient
+                // MR: maybe the deneg is necessary after all, or there could be problems when there is no loop
+//                return doExpandLTL(deneg(x.term), computed)
+                return doExpandLTL(x.term, computed)
             }
             case x: CommandTemporalAssert => {
                 // Converts temporal asserts in SMT-lib style asserts
@@ -685,15 +806,20 @@ class LTLInterpreter() extends DSLInterpreter {
                                 "Time must be an int not: " + x.time)
                     }
                 }
-                val term = deneg(x.term)
-                script = generateAllTemporalSupportFz(
-                        term, computed, true, timeConst)
-                script = expandSubformula(term, script) 
+                // MR: simplified, but it only works now with temporal operators if they have already
+                //     been expanded before (it works fine with Boolean operators)
+//                val term = deneg(x.term)
+//                script = generateAllTemporalSupportFz(
+//                        term, computed, true, timeConst)
+//                script = expandSubformula(term, script)
+                script = script :+ CommandAssert(expandTemporalFunctionsAtTime(x.term, timeConst))
                 return script
             }
             case x: CommandPush => {
                 temporalFunctions = temporalFunctions.push()
                 supportFzScope = supportFzScope.push()
+                //MR: add alreadyExpanded
+                alreadyExpanded = alreadyExpanded.push()
                 return computed :+ x
             }
             case x: CommandPop => {
@@ -708,6 +834,13 @@ class LTLInterpreter() extends DSLInterpreter {
                     case None => 
                         	throw new IllegalStateException(
                         	        "End of stack reached")
+                }
+                //MR: add alreadyExpanded
+                alreadyExpanded.pop() match {
+                    case Some(scope) => alreadyExpanded = scope
+                    case None => 
+                            throw new IllegalStateException(
+                                    "End of stack reached")
                 }
                 return computed :+ x
             }
@@ -821,11 +954,15 @@ class LTLInterpreter() extends DSLInterpreter {
             }
             // until: ((until) `(release ,(deneg `(not ,(second a))) ,(deneg `(not ,(third a)))))
             case Not(Until(x, y)) => {
-                return Until(deneg(Not(x)), deneg(Not(y)))
+                // MR: fix
+//                return Until(deneg(Not(x)), deneg(Not(y)))
+                return Release(deneg(Not(x)), deneg(Not(y)))
             }
             // release: ((until) `(release ,(deneg `(not ,(second a))) ,(deneg `(not ,(third a)))))
             case Not(Release(x, y)) => {
-                return Release(deneg(Not(x)), deneg(Not(y)))
+              // MR: fix
+//                return Release(deneg(Not(x)), deneg(Not(y)))
+                return Until(deneg(Not(x)), deneg(Not(y)))
             }
             // yesterday: ((yesterday) `(zeta ,(deneg `(not ,(second a)))))
             case Not(Yesterday(x)) => {

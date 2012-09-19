@@ -209,6 +209,61 @@ class LTLInterpreterTestCase {
      			
      	 assertExecution(input, expected, true)
     }
+
+    @Test
+    def testSameSubformulasNotDuplicated() = {
+        val input = 
+            	"(set-info :k 5)\n" +
+            	"(declare-tfun x () Bool)\n" +
+        		"(assert (and x (next x)))\n" +
+        		"(assert (=> x (next x)))"
+
+        val expected =
+				"(set-info :k 5)\n" +
+				"(declare-fun iLoop () Int)\n" +
+				"(declare-fun loopex () Bool)\n" +
+				"(assert (or (not loopex) (and (< 0 iLoop) (<= iLoop 5))))\n" +
+				"(declare-fun x (Int) Bool)\n" +
+				"(declare-fun zot-p0 (Int) Bool)\n" +
+				"(assert (zot-p0 1))\n" +
+				"(assert (=> loopex (= (zot-p0 6) (zot-p0 iLoop))))\n" +
+				"(assert (=> (not loopex) (not (zot-p0 6))))\n" +
+				"(declare-fun zot-p1 (Int) Bool)\n" +
+				"(assert (=> loopex (= (zot-p1 6) (zot-p1 iLoop))))\n" +
+				"(assert (=> (not loopex) (not (zot-p1 6))))\n" +
+				"(assert (= (zot-p0 0) (and (x 0) (zot-p1 0))))\n" +
+				"(assert (= (zot-p0 1) (and (x 1) (zot-p1 1))))\n" +
+				"(assert (= (zot-p0 2) (and (x 2) (zot-p1 2))))\n" +
+				"(assert (= (zot-p0 3) (and (x 3) (zot-p1 3))))\n" +
+				"(assert (= (zot-p0 4) (and (x 4) (zot-p1 4))))\n" +
+				"(assert (= (zot-p0 5) (and (x 5) (zot-p1 5))))\n" +
+				"(assert (= (zot-p0 6) (and (x 6) (zot-p1 6))))\n" +
+				"(assert (and loopex (= (x (- iLoop 1)) (x 5))))\n" +
+				"(assert (= (zot-p1 0) (x 1)))\n" +
+				"(assert (= (zot-p1 1) (x 2)))\n" +
+				"(assert (= (zot-p1 2) (x 3)))\n" +
+				"(assert (= (zot-p1 3) (x 4)))\n" +
+				"(assert (= (zot-p1 4) (x 5)))\n" +
+				"(assert (= (zot-p1 5) (x 6)))\n" +
+				"(assert (and loopex (= (x (- iLoop 1)) (x 5))))\n" +
+				"(declare-fun zot-p2 (Int) Bool)\n" +
+				"(assert (zot-p2 1))\n" +
+				"(assert (=> loopex (= (zot-p2 6) (zot-p2 iLoop))))\n" +
+				"(assert (=> (not loopex) (not (zot-p2 6))))\n" +
+				"(declare-fun zot-p1 (Int) Bool)\n" +
+				"(assert (=> loopex (= (zot-p1 6) (zot-p1 iLoop))))\n" +
+				"(assert (=> (not loopex) (not (zot-p1 6))))\n" +
+				"(assert (= (zot-p2 0) (=> (x 0) (zot-p1 0))))\n" +
+				"(assert (= (zot-p2 1) (=> (x 1) (zot-p1 1))))\n" +
+				"(assert (= (zot-p2 2) (=> (x 2) (zot-p1 2))))\n" +
+				"(assert (= (zot-p2 3) (=> (x 3) (zot-p1 3))))\n" +
+				"(assert (= (zot-p2 4) (=> (x 4) (zot-p1 4))))\n" +
+				"(assert (= (zot-p2 5) (=> (x 5) (zot-p1 5))))\n" +
+				"(assert (= (zot-p2 6) (=> (x 6) (zot-p1 6))))\n" +
+				"(assert (and loopex (= (x (- iLoop 1)) (x 5))))"
+     			
+     	 assertExecution(input, expected, true)
+    }
     
     @Test
     def testYesterday() = {

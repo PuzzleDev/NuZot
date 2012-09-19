@@ -28,3 +28,8 @@ sealed case class SpecDoubleConstant(override val value: Double)
 	
 sealed case class SpecStringConstant(override val value: String)
 	extends SpecConstant(value)
+
+//MR: not sure it works, but I try anyway
+//    this is to allow terms to be used at temporal instants
+sealed case class SpecTermConstant(override val value: Term)
+    extends SpecConstant(value)

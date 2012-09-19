@@ -130,6 +130,11 @@ class TypeChecker extends DSLInterpreter {
                     case SpecDoubleConstant(y)  => {
                         return Sort.Real
                     }
+                    //MR: added as a try
+                    case SpecTermConstant(y)  => {
+                        return visitTerm(y)
+                    }
+
                     case _ => 
                         // TODO(m.sama): not implemented
 				        throw new IllegalArgumentException(

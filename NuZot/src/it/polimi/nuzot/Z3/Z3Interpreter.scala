@@ -171,6 +171,10 @@ class Z3Interpreter extends DSLInterpreter {
                         val precision: Int = 10000000
                         return z3.mkReal((y * precision).toInt, precision)
                     }
+                    //MR: added to take into account modification
+                    case SpecTermConstant(y)  => {
+                        return visitTerm(y)
+                    }
                     case _ => 
                         // TODO(m.sama): not implemented
 				        throw new IllegalArgumentException(
