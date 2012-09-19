@@ -72,63 +72,69 @@ class LTLLogicDelegate extends LogicDelegate {
                     	        ltl.const(0))
                 		)	
             		)
-                for (i <- 1 until ltl.temporalExt + 2) {
-                    script = script :+ CommandAssert(
-                            IFF(
-                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
-                            	ltl.expandTemporalFunctionsAtTime(
-                            			Or(opY, 
-                            			    And(opX, 
-                            			        Term.call(Symbol(supportFz),
-                            			                TermConst(ltl.const(i - 1)))
-                            			    )
-                            			),
-                            	        ltl.const(i))
-                        		)	
-                    		)
-                }
+            	if (ltl.shouldExpandSupportFx(supportFz)) {
+	                for (i <- 1 until ltl.temporalExt + 2) {
+	                    script = script :+ CommandAssert(
+	                            IFF(
+	                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+	                            	ltl.expandTemporalFunctionsAtTime(
+	                            			Or(opY, 
+	                            			    And(opX, 
+	                            			        Term.call(Symbol(supportFz),
+	                            			                TermConst(ltl.const(i - 1)))
+	                            			    )
+	                            			),
+	                            	        ltl.const(i))
+	                        		)	
+	                    		)
+	                }
+            	}
                 script = ltl.expandSubformula(opX, script) 
                 script = ltl.expandSubformula(opY, script) 
                 return script 
             }
             case Yesterday(op) => {
-                // 0 < i <= k +1 -> F(i) = x(i - 1)
-                for (i <- 1 until ltl.temporalExt + 2) {
-                    script = script :+ CommandAssert(
-                            IFF(
-                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
-                            	ltl.expandTemporalFunctionsAtTime(op, ltl.const(i - 1))
-                        		)	
-                    		)
+                if (ltl.shouldExpandSupportFx(supportFz)) {
+	                // 0 < i <= k +1 -> F(i) = x(i - 1)
+	                for (i <- 1 until ltl.temporalExt + 2) {
+	                    script = script :+ CommandAssert(
+	                            IFF(
+	                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+	                            	ltl.expandTemporalFunctionsAtTime(op, ltl.const(i - 1))
+	                        		)	
+	                    		)
+	                }
+	                // (assert (= (f 0) false))
+	                script = script :+ CommandAssert(
+	                        EQ(
+	                            Term.call(Symbol(supportFz), TermConst(ltl.const(0))),
+	                        	Term.const(false)
+	                    		)	
+	                		)
                 }
-                // (assert (= (f 0) false))
-                script = script :+ CommandAssert(
-                        EQ(
-                            Term.call(Symbol(supportFz), TermConst(ltl.const(0))),
-                        	Term.const(false)
-                    		)	
-                		)
                 return ltl.expandSubformula(op, script)  
             }
             case Zeta(op) => {
                 script = script :+ CommandAssert(
                 		Term.call(supportFz, TermConst(ltl.const(0)))
             	)
-                for (i <- 1 until ltl.temporalExt + 2) {
-                    script = script :+ CommandAssert(
-                            IFF(
-                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
-                            	ltl.expandTemporalFunctionsAtTime(op, ltl.const(i - 1))
-                        		)	
-                    		)
-                }
-                // (assert (= (f 0) true))
-                script = script :+ CommandAssert(
-                        EQ(
-                            Term.call(Symbol(supportFz), TermConst(ltl.const(0))),
-                        	Term.const(true)
-                    		)	
-                		)
+            	if (ltl.shouldExpandSupportFx(supportFz)) {
+	                for (i <- 1 until ltl.temporalExt + 2) {
+	                    script = script :+ CommandAssert(
+	                            IFF(
+	                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+	                            	ltl.expandTemporalFunctionsAtTime(op, ltl.const(i - 1))
+	                        		)	
+	                    		)
+	                }
+	                // (assert (= (f 0) true))
+	                script = script :+ CommandAssert(
+	                        EQ(
+	                            Term.call(Symbol(supportFz), TermConst(ltl.const(0))),
+	                        	Term.const(true)
+	                    		)	
+	                		)
+            	}
                 return ltl.expandSubformula(op, script) 
             }
             case Trigger(opX, opY) => {		                
@@ -139,41 +145,45 @@ class LTLLogicDelegate extends LogicDelegate {
                             	        ltl.const(0))
                         		)	
                     		)
-                for (i <- 1 until ltl.temporalExt + 2) {
-                    script = script :+ CommandAssert(
-                            IFF(
-                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
-                            	ltl.expandTemporalFunctionsAtTime(
-                            			And(opY, 
-                            			    Or(opX, 
-                            			        Term.call(Symbol(supportFz),
-                            			                TermConst(ltl.const(i - 1)))
-                            			    )
-                            			),
-                            	        ltl.const(i))
-                        		)	
-                    		)
+                if (ltl.shouldExpandSupportFx(supportFz)) {
+	                for (i <- 1 until ltl.temporalExt + 2) {
+	                    script = script :+ CommandAssert(
+	                            IFF(
+	                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+	                            	ltl.expandTemporalFunctionsAtTime(
+	                            			And(opY, 
+	                            			    Or(opX, 
+	                            			        Term.call(Symbol(supportFz),
+	                            			                TermConst(ltl.const(i - 1)))
+	                            			    )
+	                            			),
+	                            	        ltl.const(i))
+	                        		)	
+	                    		)
+	                }
                 }
                 script = ltl.expandSubformula(opX, script) 
                 script = ltl.expandSubformula(opY, script) 
                 return script
             }
             case Release(opX, opY) => {
-                // 0 <= i <= k -> F(i) = y(i) and (x(1) or F(i + 1))
-                for (i <- 0 until ltl.temporalExt + 1) {
-                    script = script :+ CommandAssert(
-                            IFF(
-                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
-                            	ltl.expandTemporalFunctionsAtTime(
-                            			And(opY, 
-                            			    Or(opX, 
-                            			        Term.call(Symbol(supportFz),
-                            			                TermConst(ltl.const(i + 1)))
-                            			    )
-                            			),
-                            	        ltl.const(i))
-                        		)	
-                    		)
+                if (ltl.shouldExpandSupportFx(supportFz)) {
+	                // 0 <= i <= k -> F(i) = y(i) and (x(1) or F(i + 1))
+	                for (i <- 0 until ltl.temporalExt + 1) {
+	                    script = script :+ CommandAssert(
+	                            IFF(
+	                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+	                            	ltl.expandTemporalFunctionsAtTime(
+	                            			And(opY, 
+	                            			    Or(opX, 
+	                            			        Term.call(Symbol(supportFz),
+	                            			                TermConst(ltl.const(i + 1)))
+	                            			    )
+	                            			),
+	                            	        ltl.const(i))
+	                        		)	
+	                    		)
+	                }
                 }
                 
                 //(declare-fun i_eve_zot-p0 () Int)
@@ -227,34 +237,38 @@ class LTLLogicDelegate extends LogicDelegate {
                 script = ltl.expandSubformula(opY, script) 
                 return script
             }
-            case Next(op) => {		                
-                // 0 <= i <= k -> F(i) = x(i + 1)
-                for (i <- 0 until ltl.temporalExt + 1) {
-                    script = script :+ CommandAssert(
-                            IFF(
-                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
-                            	ltl.expandTemporalFunctionsAtTime(op, ltl.const(i + 1))
-                        		)	
-                    		)
+            case Next(op) => {		
+                if (ltl.shouldExpandSupportFx(supportFz)) {
+	                // 0 <= i <= k -> F(i) = x(i + 1)
+	                for (i <- 0 until ltl.temporalExt + 1) {
+	                    script = script :+ CommandAssert(
+	                            IFF(
+	                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+	                            	ltl.expandTemporalFunctionsAtTime(op, ltl.const(i + 1))
+	                        		)	
+	                    		)
+	                }
                 }
                 return ltl.expandSubformula(op, script)  
             }
             case Until(opX, opY) => {
-                // 0 <= i <= k -> F(i) = y(i) or (x(1) and F(i + 1))
-                for (i <- 0 until ltl.temporalExt + 1) {
-                    script = script :+ CommandAssert(
-                        IFF(
-                            Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
-                        	ltl.expandTemporalFunctionsAtTime(
-                        			Or(opY, 
-                        			    And(opX, 
-                        			        Term.call(Symbol(supportFz),
-                        			        		TermConst(ltl.const(i + 1)))
-                        			    )
-                        			),
-                        	        ltl.const(i))
-                    		)	
-                		)
+                if (ltl.shouldExpandSupportFx(supportFz)) {
+	                // 0 <= i <= k -> F(i) = y(i) or (x(1) and F(i + 1))
+	                for (i <- 0 until ltl.temporalExt + 1) {
+	                    script = script :+ CommandAssert(
+	                        IFF(
+	                            Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+	                        	ltl.expandTemporalFunctionsAtTime(
+	                        			Or(opY, 
+	                        			    And(opX, 
+	                        			        Term.call(Symbol(supportFz),
+	                        			        		TermConst(ltl.const(i + 1)))
+	                        			    )
+	                        			),
+	                        	        ltl.const(i))
+	                    		)	
+	                		)
+	                }
                 }
                 //(declare-fun i_eve_zot-p0 () Int)
 				//(assert (-> loopex (-> (zot-p0 5) (and (<= iLoop i_eve_zot-p0)
@@ -313,14 +327,16 @@ class LTLLogicDelegate extends LogicDelegate {
                 
         term match {
             case op: And => {
-                // 0 <= i <= k + 1 -> F(i) = x(i)
-                for (i <- 0 until ltl.temporalExt + 2) {
-                    script = script :+ CommandAssert(
-                            IFF(
-                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
-                            	ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
-                        		)	
-                    		)
+                if (ltl.shouldExpandSupportFx(supportFz)) {
+	                // 0 <= i <= k + 1 -> F(i) = x(i)
+	                for (i <- 0 until ltl.temporalExt + 2) {
+	                    script = script :+ CommandAssert(
+	                            IFF(
+	                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+	                            	ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
+	                        		)	
+	                    		)
+	                }
                 }
                 for (sub <- op.values) {
                     script = ltl.expandSubformula(sub, script)  
@@ -328,40 +344,45 @@ class LTLLogicDelegate extends LogicDelegate {
                 return script 
             }
             case Not(op) => {
-                // 0 <= i <= k + 1 -> F(i) = x(i)
-                for (i <- 0 until ltl.temporalExt + 2) {
-                    script = script :+ CommandAssert(
-                            IFF(
-                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
-                            	ltl.expandTemporalFunctionsAtTime(Not(op), ltl.const(i))
-                        		)	
-                    		)
+                if (ltl.shouldExpandSupportFx(supportFz)) {
+	                // 0 <= i <= k + 1 -> F(i) = x(i)
+	                for (i <- 0 until ltl.temporalExt + 2) {
+	                    script = script :+ CommandAssert(
+	                            IFF(
+	                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+	                            	ltl.expandTemporalFunctionsAtTime(Not(op), ltl.const(i))
+	                        		)	
+	                    		)
+	                }
                 }
                 return ltl.expandSubformula(op, script)  
             }
             case op: Rem => {
-                for (i <- 0 until ltl.temporalExt + 2) {
-                    script = script :+ CommandAssert(
-		                EQ(
-					      Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
-					      ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
-					    )
-                    )
+                if (ltl.shouldExpandSupportFx(supportFz)) {
+	                for (i <- 0 until ltl.temporalExt + 2) {
+	                    script = script :+ CommandAssert(
+			                EQ(
+						      Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+						      ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
+						    )
+	                    )
+	                }
                 }
-                
                 script = ltl.expandSubformula(op.left, script)
                 script = ltl.expandSubformula(op.right, script)
 
                 return script
             }
             case op: ITE => {
-                for (i <- 0 until ltl.temporalExt + 2) {
-                    script = script :+ CommandAssert(
-		                EQ(
-					      Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
-					      ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
-					    )
-                    )
+                if (ltl.shouldExpandSupportFx(supportFz)) {
+	                for (i <- 0 until ltl.temporalExt + 2) {
+	                    script = script :+ CommandAssert(
+			                EQ(
+						      Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+						      ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
+						    )
+	                    )
+	                }
                 }
                 
                 script = ltl.expandSubformula(op.ifa, script)
@@ -370,43 +391,47 @@ class LTLLogicDelegate extends LogicDelegate {
                 return script
             }
             case op: IFF => {
-                for (i <- 0 until ltl.temporalExt + 2) {
-                    script = script :+ CommandAssert(
-		                EQ(
-					      Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
-					      ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
-					    )
-                    )
+                if (ltl.shouldExpandSupportFx(supportFz)) {
+	                for (i <- 0 until ltl.temporalExt + 2) {
+	                    script = script :+ CommandAssert(
+			                EQ(
+						      Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+						      ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
+						    )
+	                    )
+	                }
                 }
-                
                 script = ltl.expandSubformula(op.ifa, script)
                 script = ltl.expandSubformula(op.thena, script)
                 return script
             }
             case op: IMP => {
-                for (i <- 0 until ltl.temporalExt + 2) {
-                    script = script :+ CommandAssert(
-		                EQ(
-					      Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
-					      ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
-					    )
-                    )
+                if (ltl.shouldExpandSupportFx(supportFz)) {
+	                for (i <- 0 until ltl.temporalExt + 2) {
+	                    script = script :+ CommandAssert(
+			                EQ(
+						      Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+						      ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
+						    )
+	                    )
+	                }
                 }
-                
                 script = ltl.expandSubformula(op.ifa, script)
                 script = ltl.expandSubformula(op.thena, script)
                 return script
             }
             
             case op: Or => {
-                // 0 <= i <= k + 1 -> F(i) = x(i)
-                for (i <- 0 until ltl.temporalExt + 2) {
-                    script = script :+ CommandAssert(
-                            IFF(
-                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
-                                ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
-                        		)	
-                    		)
+                if (ltl.shouldExpandSupportFx(supportFz)) {
+	                // 0 <= i <= k + 1 -> F(i) = x(i)
+	                for (i <- 0 until ltl.temporalExt + 2) {
+	                    script = script :+ CommandAssert(
+	                            IFF(
+	                                Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+	                                ltl.expandTemporalFunctionsAtTime(op, ltl.const(i))
+	                        		)	
+	                    		)
+	                }
                 }
                 for (sub <- op.values) {
                     script = ltl.expandSubformula(sub, script)  

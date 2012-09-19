@@ -34,14 +34,16 @@ class FOArithmeticDelegate extends ArithmeticDelegate {
         val supportFz = ltl.generateTemporalSupportFzName(term)
         var script = computed
         
-        // 0 <= i <= k -> zot-pX(i) <-> (AOP x(i) y(i))
-        for (i <- 0 until ltl.temporalExt + 2) {
-            script = script :+ CommandAssert(
-                    IFF(
-                        Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
-                    	ltl.expandTemporalFunctionsAtTime(term, ltl.const(i))
-                		)	
-            		)
+        if (ltl.shouldExpandSupportFx(supportFz)) {
+	        // 0 <= i <= k -> zot-pX(i) <-> (AOP x(i) y(i))
+	        for (i <- 0 until ltl.temporalExt + 2) {
+	            script = script :+ CommandAssert(
+	                    IFF(
+	                        Term.call(Symbol(supportFz), TermConst(ltl.const(i))),
+	                    	ltl.expandTemporalFunctionsAtTime(term, ltl.const(i))
+	                		)	
+	            		)
+	        }
         }
         term match {
             case op: UnaryOperator => {

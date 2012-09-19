@@ -61,7 +61,7 @@ class LTLInterpreter() extends DSLInterpreter {
         	new DefaultEqualityDelegate()
     
     // Declared temporal functions.
-    var temporalFunctions = new Scope[Symbol, Sort]()    
+    var temporalFunctions = new Scope[Symbol, Sort]()
     
     // The temporal extension K
     var _temporalExt: Int = -1
@@ -199,8 +199,6 @@ class LTLInterpreter() extends DSLInterpreter {
         	}	
         }
     }
-    
-    
     
     def loadLogic(logic: Symbol) = {
         val className = logic.toString()
@@ -396,6 +394,19 @@ class LTLInterpreter() extends DSLInterpreter {
         
         supportFzScope.set(term, fzName)
         return fzName
+    }
+    
+    var alreadyExpanded = new Scope[String, String]
+    def shouldExpandSupportFx(fzName: String): Boolean = {
+         alreadyExpanded.get(fzName) match {
+            case Some(name) => {
+                return false
+            }
+            case None => {
+                alreadyExpanded.set(fzName, fzName)
+                return true
+            }
+        }
     }
     
     def generateAllTemporalSupportFz(
