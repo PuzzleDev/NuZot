@@ -65,11 +65,24 @@ class DefaultEqualityDelegate extends EqualityDelegate {
                         term,
                         ltl.const(ltl.temporalExt+1))
                 )))
+        //MR: we also need to add the loopConstraint on the (in)equality
+        val loopConstraint = CommandAssert(
+            IMP(
+                Term.call(LTLInterpreter.loopEx),
+                IFF(
+                    ltl.expandTemporalFunctionsAtTime(
+                        term,
+                        SpecTermConstant(Sub(Term.call(LTLInterpreter.iLoop), TermConst(ltl.const(1))))),
+                    ltl.expandTemporalFunctionsAtTime(
+                        term,
+                        ltl.const(ltl.temporalExt))
+                ))
+            )
 
         script = ltl.expandSubformula(term.value1, script)
         script = ltl.expandSubformula(term.value2, script)
 
         //MR: we add the LastStateConstraints bottom-up
-        return script :+ lastStateConstraintNotLoopEx
+        return script :+ lastStateConstraintNotLoopEx :+ lastStateConstraintLoopEx :+ loopConstraint
     }
 }
