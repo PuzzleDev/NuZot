@@ -107,5 +107,23 @@ sealed case class Trigger(val value: Term, val condition: Term)
 
 }
 		
-		
-		
+
+//MR: added
+/**
+ * The arithmetic next operator ("next value", to differentiate it from the Boolean next)
+ * 
+ * (next_v term)
+ */
+sealed case class NextV(override val value: Term)
+        extends UnaryOperator("next_v", value)
+        with ArithmeticTemporalOperator
+
+        
+ /**
+ * The arithmetic yesterday operator ("yesterday value", to differentiate it from the Boolean yesterday)
+ * 
+ * (yesterday_v term)
+ */
+sealed case class YesterdayV(override val value: Term)
+        extends UnaryOperator("yesterday_v", value)
+        with ArithmeticTemporalOperator

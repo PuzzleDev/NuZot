@@ -20,6 +20,9 @@ import it.polimi.nuzot.ltl.grammar.Yesterday
 import it.polimi.nuzot.ltl.grammar.Zeta
 import it.polimi.nuzot.ltl.grammar.Since
 import it.polimi.nuzot.ltl.grammar.Trigger
+//MR: added
+import it.polimi.nuzot.ltl.grammar.NextV
+import it.polimi.nuzot.ltl.grammar.YesterdayV
 
 /**
  * @author Michele Sama (m.sama@puzzledev.com)
@@ -49,6 +52,13 @@ class LTLParser extends SMTParser {
         "(" ~ "trigger" ~> term ~ term <~ ")" ^^ {
             x => Trigger(x._1, x._2)
         } |
+//MR: added to take into account arithmetic temporal terms
+        "(" ~ "next_v" ~> term <~ ")" ^^ {
+            x => NextV(x)
+        } |
+        "(" ~ "yesterday_v" ~> term <~ ")" ^^ {
+            x => YesterdayV(x)
+        } |        
         super.term
     }
     
