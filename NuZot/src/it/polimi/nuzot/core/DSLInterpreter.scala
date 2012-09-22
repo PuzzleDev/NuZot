@@ -207,6 +207,9 @@ trait DSLInterpreter {
 	
 	private final def visitScript(
 	        source: Script, computed: Script): Script = {
+	    /*
+	     * The recursive implementation hits the stack limit.
+	     * 
         source.commands match {
             case Nil => return computed
             case head::tail => {
@@ -225,7 +228,25 @@ trait DSLInterpreter {
                     }
                 }
             }
-        }
+        }*/
+	    var commands: List[Command] = source.commands
+	    var computed: Script = new Script()
+	    while (!commands.isEmpty) {
+	        val head = commands.head
+	        commands = commands.tail
+	        append(head)
+	        try {
+	        	computed = innerVisitCommand(head, computed)
+	        } catch {
+                    case ex: RuntimeException => {
+                        original = original.previous()
+                        println("An error has occurred: "+ ex.getMessage())
+                        ex.printStackTrace()
+                        return computed
+                    }
+                }
+	    }
+	    return computed
     }
 	
 	/**
